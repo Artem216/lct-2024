@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.api.endpoints import video, frames
+from api.endpoints import auth
 from contextlib import asynccontextmanager
-from app.db.database import db
+from db.database import db
 
 
 @asynccontextmanager
@@ -16,5 +16,4 @@ app = FastAPI(lifespan=lifespan)
 
 
 
-app.include_router(video.router, prefix="/api/v1/video", tags=["video"])
-app.include_router(frames.router, prefix="/api/v1/frames", tags=["frames"])
+app.include_router(auth.router, prefix="/api/v1")
