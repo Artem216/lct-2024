@@ -10,7 +10,7 @@
   }
 
   body {
-    @apply bg-dark-1 text-white min-h-screen font-inter;
+    @apply bg-light-1 text-white min-h-screen font-inter;
   }
 }
 
@@ -31,6 +31,11 @@
   .h3-bold {
     @apply text-[24px] font-bold leading-[140%] tracking-tighter;
   }
+
+  .h3-regular {
+    @apply text-[24px] font-normal leading-[140%] tracking-tighter;
+  }
+
 
   .base-semibold {
     @apply text-[16px] font-semibold leading-[140%] tracking-tighter;
@@ -258,7 +263,7 @@
   }
 
   .shad-input {
-    @apply h-12 bg-dark-4 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 !important;
+    @apply h-12 bg-light-1 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 !important;
   }
 
   .shad-textarea {
