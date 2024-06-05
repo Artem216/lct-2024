@@ -10,7 +10,7 @@ class Config(BaseSettings):
 
     postgres_user: str ="postgres"
     postgres_password: str ="postgres"
-    postgres_host: str = "0.0.0.0"
+    postgres_host: str = "db"
     postgres_db: str = "dev"
     postgres_port: int = 5432
     @property
