@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+
+service MLService {
+    rpc ProcessPhoto (PhotoRequest) returns (PhotoResponse);
+}
+
+message Tag {
+    string name = 1;
+}
+
+message PhotoRequest {
+    int64 id = 1;
+    string promt = 2;
+    repeated Tag tags = 3;
+}
+
+
+message PhotoResponse {
+    int64 id = 1;
+    string s3_url = 2;
+    string status = 3;
+}

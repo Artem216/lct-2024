@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 
 from schemas.auth_schemas import AccessToken, Signup
-from services.user_service import add_user, get_user
+from services.user_service import add_user, get_user_by_email
 from utils.jwt import create_access_jwt, get_password_hash, verify_password
 
 
@@ -35,7 +35,7 @@ async def signup(
 async def login(
     login_data: OAuth2PasswordRequestForm = Depends(),
 ) -> AccessToken:
-    user = await get_user(email=login_data.username)
+    user = await get_user_by_email(email=login_data.username)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

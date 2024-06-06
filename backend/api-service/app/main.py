@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from api.endpoints import auth
+from api.endpoints import predict
 from contextlib import asynccontextmanager
 from db.database import db
 
@@ -14,8 +15,7 @@ backend = get_backend(f"{cfg.dsn}")
 
 migrations_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "./migrations"))
 
-
-migrations = read_migrations("/app/app/migrations")
+migrations = read_migrations(migrations_dir)
 backend.apply_migrations(backend.to_apply(migrations))
 
 
@@ -30,4 +30,5 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(auth.router, prefix="/api/v1")
+app.include_router(auth.router)
+app.include_router(predict.router, prefix="/api/v1")

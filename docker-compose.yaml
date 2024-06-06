@@ -27,6 +27,12 @@ services:
       - db
     restart: always
 
+  ml:
+    build:
+      context: ./backend/ml
+    ports:
+      - 50051:50051
+
   # s3:
   #   image: minio/minio
   #   ports:
