@@ -62,22 +62,20 @@ const SignupForm = () => {
 
     const isLoggedIn = await checkAuthUser();
 
-    if(isLoggedIn){
+    if (isLoggedIn) {
       form.reset();
       navigate('/');
     } else {
       return toast(
-        {title: 'Sign up failed. Please try again'}
+        { title: 'Sign up failed. Please try again' }
       )
     }
   }
 
   return (
     <Form {...form}>
-      <div className="sm:w-420 flex-center flex-col">
-        <img src="/assets/images/logo.svg" alt="logo" />
-        <h2 className="md:h2-bold h3-bold sm:pt-12 pt-5">Create a new account</h2>
-        <p className="text-light-3 base-bold md:h3-bold">To use Snapgram, please enter your account details</p>
+      <div className="sm:w-420 flex-col bg-secondary-500 py-10 px-8 rounded-[60px] drop-shadow-2xl">
+        <p className="base-regular md:h3-regular pt-3 text-dark-1 text-left mb-3">Регистрация</p>
 
         <form onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-5 w-full mt-4 md:max-w-96 text-dark-1">
@@ -86,22 +84,8 @@ const SignupForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input type="text" className="shad-input"{...field} />
-                </FormControl>
-                <FormMessage className="shad-form_message" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input type="text" className="shad-input"{...field} />
+                  <Input type="text" placeholder="ФИО" className="shad-input"{...field} />
                 </FormControl>
                 <FormMessage className="shad-form_message" />
               </FormItem>
@@ -112,9 +96,8 @@ const SignupForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" className="shad-input"{...field} />
+                  <Input type="email" placeholder="Email" className="shad-input"{...field} />
                 </FormControl>
                 <FormMessage className="shad-form_message" />
               </FormItem>
@@ -125,25 +108,37 @@ const SignupForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" className="shad-input"{...field} />
+                  <Input type="password" placeholder="Пароль" className="shad-input"{...field} />
                 </FormControl>
                 <FormMessage className="shad-form_message" />
               </FormItem>
             )}
           />
-          <Button type="submit" className="shad-button_primary">
-            {isCreatingUser ? (
-              <div className="flex-center gap-2">
-                <Loader />Loading...
-              </div>
-            ) : "Sign up"}
-          </Button>
-          <p className="text-small-regular text-light-2 text-center mt-2">
-            Already have an account?
-            <Link to="/sign-in" className="text-primary-500 text-small-semibold ml-1">Log in</Link>
-          </p>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input type="password" placeholder="Повторите пароль" className="shad-input"{...field} />
+                </FormControl>
+                <FormMessage className="shad-form_message" />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between px-[5%] mt-2">
+            <p className="text-small-regular text-dark-1 text-center mt-2">
+              <Link to="/sign-up" className="text-dark-1 underline text-small-semibold ml-1">Войти</Link>
+            </p>
+            <Button type="submit" className="shad-button_primary px-[15%]">
+              {isUserLoading ? (
+                <div className="flex-center gap-2">
+                  <Loader />Загрузка...
+                </div>
+              ) : "Зарегистрироваться"}
+            </Button>
+          </div>
         </form>
       </div>
     </Form>
