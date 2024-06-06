@@ -117,7 +117,7 @@ const SignupForm = () => {
           />
           <FormField
             control={form.control}
-            name="password"
+            name="password_repeat"
             render={({ field }) => (
               <FormItem>
                 <FormControl>

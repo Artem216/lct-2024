@@ -1,15 +1,19 @@
-import * as z from "zod"
+import * as z from "zod";
 
 export const SignupValidationSchema = z.object({
-    name: z.string().min(2, {message: 'The string is too short'}),
-    username: z.string().min(2, {message: 'The string is too short'}),
+    name: z.string(),
     email: z.string().email(),
-    password: z.string().min(8, {message: 'Password must be at least 8 characters'}),
-})
+    password: z.string().min(8, {message: 'Пароль должен состоять как минимум из 8 символов'}),
+    password_repeat: z.string().min(8, {message: 'Пароль должен состоять как минимум из 8 символов'}),
+}).refine(data => data.password === data.password_repeat, {
+    message: 'Пароли не совпадают',
+    path: ['password_repeat'],
+});
+
 
 export const SigninValidationSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(8, {message: 'Password must be at least 8 characters'}),
+    password: z.string().min(8, {message: 'Пароль должен состоять как минимум из 8 символов'}),
 })
 
 export const PostValidationSchema = z.object({
