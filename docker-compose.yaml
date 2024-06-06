@@ -16,16 +16,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  # api:
-  #   build: ./backend/api-service
-  #   container_name: video_processing_api
-  #   command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - DATABASE_URL=postgresql://postgres:postgres@db/dev
-  #   depends_on:
-  #     - db
+  api:
+    build: ./backend/api-service
+    container_name: api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db/dev
+    depends_on:
+      - db
+    restart: always
+
+  ml:
+    build:
+      context: ./backend/ml
+    ports:
+      - 50051:50051
 
   # s3:
   #   image: minio/minio

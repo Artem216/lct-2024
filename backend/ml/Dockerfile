@@ -30,9 +30,6 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-# RUN pip install --upgrade pip
-
-
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
@@ -48,7 +45,7 @@ USER appuser
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 8000
+EXPOSE 50051
 
 # Run the application.
-CMD fastapi run ./app/main.py
+CMD python main.py
