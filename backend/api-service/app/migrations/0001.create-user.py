@@ -7,6 +7,36 @@ CREATE TABLE users (
             is_admin BOOL NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
+
+CREATE TABLE features (
+            id SERIAL PRIMARY KEY,
+            prompt VARCHAR(255) NOT NULL,
+            height INT NOT NULL,
+            widht INT NOT NULL,
+            goal VARCHAR(255) NOT NULL,
+            tags VARCHAR(255)
+        )
+
+
+CREATE TABLE requests (
+            id SERIAL PRIMARY KEY,
+            created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            status VARCHAR(255) NOT NULL,
+            fk_features INT,
+            fk_user INT,
+            FOREIGN KEY (fk_features) REFERENCES features(id),
+            FOREIGN KEY (fk_user) REFERENCES users(id)
+        )
+
+CREATE TABLE response (
+            id SERIAL PRIMARY KEY,
+            s3_url VARCHAR(255) NOT NULL,
+            rating INT, 
+            fk_request INT,
+            fk_user INT,
+            FOREIGN KEY (fk_request) REFERENCES requests(id),
+            FOREIGN KEY (fk_user) REFERENCES users(id)
+        )
 """
 
 from yoyo import step
@@ -15,5 +45,11 @@ __depends__ = {}
 
 steps = [
     step("CREATE TABLE users ( id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL UNIQUE, password VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL UNIQUE, is_admin  BOOL NOT NULL, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP)",
-        "DROP TABLE users")
+        "DROP TABLE users"),
+    step("CREATE TABLE features ( id SERIAL PRIMARY KEY, prompt VARCHAR(255) NOT NULL, height INT NOT NULL, widht INT NOT NULL, goal VARCHAR(255) NOT NULL, tags VARCHAR(255))",
+        "DROP TABLE features"),
+    step(" CREATE TABLE requests ( id SERIAL PRIMARY KEY, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP, status VARCHAR(255) NOT NULL, fk_features INT, fk_user INT, FOREIGN KEY (fk_features) REFERENCES features(id), FOREIGN KEY (fk_user) REFERENCES users(id) )",
+        "DROP TABLE requests"),
+    step("CREATE TABLE response ( id SERIAL PRIMARY KEY, s3_url VARCHAR(255) NOT NULL, fk_request INT, rating INT, fk_user INT, FOREIGN KEY (fk_request) REFERENCES requests(id), FOREIGN KEY (fk_user) REFERENCES users(id))",
+        "DROP TABLE response")
 ]

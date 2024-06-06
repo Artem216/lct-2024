@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from api.endpoints import auth
 from api.endpoints import predict
+from api.endpoints import find
 from contextlib import asynccontextmanager
 from db.database import db
 
@@ -32,3 +33,4 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(auth.router)
 app.include_router(predict.router, prefix="/api/v1")
+app.include_router(find.router, prefix="/api/v1")
