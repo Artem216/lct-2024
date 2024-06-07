@@ -8,6 +8,9 @@ class PromptTags(BaseModel):
 
 class PredictRequest(BaseModel):
     prompt: str
+    width: int
+    height: int
+    goal: str
     tags: List[PromptTags]
 
 class PredictResponse(BaseModel):

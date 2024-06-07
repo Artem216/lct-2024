@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import logging
 
 
 class Config(BaseSettings):
@@ -26,3 +27,14 @@ class Config(BaseSettings):
     # s3_host: str = 'localhost:9000'
 
 cfg = Config() 
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
