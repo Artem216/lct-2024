@@ -40,7 +40,6 @@ async def add_request(user_id : int, predict_data : PredictRequest) -> AddReques
 
     return AddRequestData(id= req_record['id'],status="In progress")
 
-# @parlorsky
 
 async def add_response(req_id : str, s3_url : str, user_id: int) -> AddResponseData:
     
