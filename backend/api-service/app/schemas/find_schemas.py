@@ -12,3 +12,11 @@ class AllCards(BaseModel):
     height: int
     goal: str
     tags: List[PromptTags]
+
+
+
+class TopCards(BaseModel):
+    id: int
+    user_name: str
+    s3_url : str
+    rating: int
