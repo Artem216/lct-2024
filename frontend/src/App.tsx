@@ -1,6 +1,6 @@
 import SigninForm from './_auth/forms/SigninForm'
 import SignupForm from './_auth/forms/SignupForm'
-import { Home} from './_root/pages'
+import { Home, Editor} from './_root/pages'
 import { Routes, Route } from 'react-router-dom'
 import { Toaster } from "@/components/ui/toaster"
 
@@ -20,6 +20,7 @@ const App = () => {
         {/* private routes */}
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path='/editor' element={<Editor />} />
           {/* <Route path='/posts/:id' element={<PostDetails />}/>
           <Route path='/profile/:id/*' element={<Profile />}/> */}
         </Route>

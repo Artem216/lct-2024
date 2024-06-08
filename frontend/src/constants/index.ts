@@ -48,3 +48,21 @@ export const bottombarLinks = [
         label: "Create",
     },
 ];
+
+export const topbarLinks = [
+    {
+        imgURL: "/assets/icons/home.svg",
+        route: "/",
+        label: "Главная",
+    },
+    {
+        imgURL: "/assets/icons/wallpaper.svg",
+        route: "/editor",
+        label: "Конструктор",
+    },
+    {
+        imgURL: "/assets/icons/gallery-add.svg",
+        route: "/my-images",
+        label: "Мои изображения",
+    },
+];
