@@ -4,7 +4,7 @@ import { Button } from "../ui/button"
 const HomeBanner = () => {
     return (
         <>
-            <div className="w-full bg-black h-[400px] my-[100px] mx-[50px] bg-gradient-to-b from-primary-500 to-secondary-500
+            <div className="w-[90%] bg-black h-[400px] my-[100px] mx-auto bg-gradient-to-b from-primary-500 to-secondary-500
             rounded-tr-[15px] rounded-tl-[70px] rounded-bl-[15px] rounded-br-[70px] p-10 flex align-middle justify-center drop-shadow-2xl">
                 <div className="my-auto">
                     <h1 className="h3-regular md:h1-semibold text-center m-5">Генерация изображений с помощью AI</h1>

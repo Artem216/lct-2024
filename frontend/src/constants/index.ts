@@ -66,3 +66,31 @@ export const topbarLinks = [
         label: "Мои изображения",
     },
 ];
+
+export const imageByCategory = [
+    {
+        imgURL: "/assets/money_house.png",
+        color: "#FFC1A4",
+        route: "/my-images",
+        title: "Ипотека",
+    },
+    {
+        imgURL: "/assets/car_percent.png",
+        color: "#476BF0",
+        route: "/my-images",
+        title: "Автокредиты",
+    },
+    {
+        imgURL: "/assets/card_ok.png",
+        color: "#FFC1A4",
+        route: "/my-images",
+        title: "Кредиты",
+    },
+    {
+        imgURL: "/assets/shield.png",
+        color: "#476BF0",
+        route: "/my-images",
+        title: "Вклады",
+    },
+
+];
