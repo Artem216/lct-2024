@@ -1,8 +1,8 @@
-import React from 'react'
+import HomeBanner from '@/components/widgets/HomeBanner'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <HomeBanner />
   )
 }
 
