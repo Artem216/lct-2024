@@ -18,11 +18,12 @@ import { useToast } from "@/components/ui/use-toast"
 import { useUserContext } from "@/context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import Loader from "@/components/shared/Loader"
+import ApiAuth from "@/services/apiAuth"
 
 
 const SignupForm = () => {
   const { toast } = useToast();
-  const { isLoading: isUserLoading } = useUserContext();
+  const { isLoading: isUserLoading , setIsAuth} = useUserContext();
   const navigate = useNavigate();
 
 
@@ -39,34 +40,22 @@ const SignupForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SignupValidationSchema>) {
-    // const newUser = await createUserAccount(values);
-    // if (!newUser) {
-    //   return toast({
-    //     title: "Sign up failed. Please try again",
-    //   })
-    // }
-
-    // const session = await signInAccount({
-    //   email: values.email,
-    //   password: values.password,
-    // })
-
-    // if (!session) {
-    //   return toast({
-    //     title: "Sign in failed. Please try again",
-    //   })
-    // }
-
-    // const isLoggedIn = await checkAuthUser();
-
-    // if (isLoggedIn) {
-    //   form.reset();
-    //   navigate('/');
-    // } else {
-    //   return toast(
-    //     { title: 'Sign up failed. Please try again' }
-    //   )
-    // }
+    try {
+      await ApiAuth.singUpUser({
+        email: values.email,
+        password: values.password,
+        name: values.name
+      })
+      setIsAuth(true);
+      form.reset();
+      navigate('/');
+    }
+    catch (error) {
+      return toast({
+        title: "Ошибка регистрации. Попробуйте снова",
+        variant: "destructive",
+      })
+    }
   }
 
   return (

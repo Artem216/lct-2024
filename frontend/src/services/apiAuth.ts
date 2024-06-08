@@ -16,10 +16,18 @@ interface CreateUserData {
 const ApiAuth = {
 
     async loginUser(data: UserLogin) {
-        const response = await axios
-            .post(`${BASE_URL}/login`, data)
+        let config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', 
+                'accept': 'application/json'
+            }
+        }
 
-        storage.setToken(response.data.accessToken);
+        const response = await axios
+            .post(`${BASE_URL}/login`, data, config)
+
+        console.log(response.data)
+        storage.setToken(response.data["access_token"]);
         // storage.setRole(response.data.role);
         return;
     },
@@ -28,7 +36,7 @@ const ApiAuth = {
         const response = await axios
             .post(`${BASE_URL}/signup`, data);
 
-        storage.setToken(response.data.accessToken);
+        storage.setToken(response.data["access_token"]);
         // storage.setRole(response.data.role);
         return;
     },
