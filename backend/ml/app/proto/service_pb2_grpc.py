@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from proto import service_pb2 as proto_dot_service__pb2
+from proto import service_pb2 as app_dot_proto_dot_service__pb2
 
 GRPC_GENERATED_VERSION = '1.64.1'
 GRPC_VERSION = grpc.__version__
@@ -20,7 +20,7 @@ except ImportError:
 if _version_not_supported:
     warnings.warn(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in proto/service_pb2_grpc.py depends on'
+        + f' but the generated code in app/proto/service_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -41,8 +41,8 @@ class MLServiceStub(object):
         """
         self.ProcessPhoto = channel.unary_unary(
                 '/MLService/ProcessPhoto',
-                request_serializer=proto_dot_service__pb2.PhotoRequest.SerializeToString,
-                response_deserializer=proto_dot_service__pb2.PhotoResponse.FromString,
+                request_serializer=app_dot_proto_dot_service__pb2.PhotoRequest.SerializeToString,
+                response_deserializer=app_dot_proto_dot_service__pb2.PhotoResponse.FromString,
                 _registered_method=True)
 
 
@@ -60,8 +60,8 @@ def add_MLServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ProcessPhoto': grpc.unary_unary_rpc_method_handler(
                     servicer.ProcessPhoto,
-                    request_deserializer=proto_dot_service__pb2.PhotoRequest.FromString,
-                    response_serializer=proto_dot_service__pb2.PhotoResponse.SerializeToString,
+                    request_deserializer=app_dot_proto_dot_service__pb2.PhotoRequest.FromString,
+                    response_serializer=app_dot_proto_dot_service__pb2.PhotoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -89,8 +89,8 @@ class MLService(object):
             request,
             target,
             '/MLService/ProcessPhoto',
-            proto_dot_service__pb2.PhotoRequest.SerializeToString,
-            proto_dot_service__pb2.PhotoResponse.FromString,
+            app_dot_proto_dot_service__pb2.PhotoRequest.SerializeToString,
+            app_dot_proto_dot_service__pb2.PhotoResponse.FromString,
             options,
             channel_credentials,
             insecure,

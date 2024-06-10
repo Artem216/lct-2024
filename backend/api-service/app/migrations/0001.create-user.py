@@ -30,7 +30,7 @@ CREATE TABLE requests (
 
 CREATE TABLE response (
             id SERIAL PRIMARY KEY,
-            s3_url VARCHAR(255) NOT NULL,
+            s3_url TEXT NOT NULL,
             rating INT, 
             fk_request INT,
             fk_user INT,
@@ -62,6 +62,6 @@ steps = [
         "DROP TABLE requests"),
     
     
-    step("CREATE TABLE response ( id SERIAL PRIMARY KEY, s3_url VARCHAR(255) NOT NULL, fk_request INT, rating INT, fk_user INT, FOREIGN KEY (fk_request) REFERENCES requests(id), FOREIGN KEY (fk_user) REFERENCES users(id))",
+    step("CREATE TABLE response ( id SERIAL PRIMARY KEY, s3_url text NOT NULL, fk_request INT, rating INT, fk_user INT, FOREIGN KEY (fk_request) REFERENCES requests(id), FOREIGN KEY (fk_user) REFERENCES users(id))",
         "DROP TABLE response")
 ]

@@ -2,7 +2,7 @@ from db.database import get_connection
 from pydantic import BaseModel
 from typing import Optional
 
-from schemas.predict_schemas import  PredictRequest
+from schemas.predict_schemas import  PredictRequest, PredictData
 
 from config import logger
 
@@ -54,3 +54,22 @@ async def add_response(req_id : str, s3_url : str, user_id: int) -> AddResponseD
     record = await db.fetchrow(qwery, s3_url, req_id, user_id)
 
     return AddResponseData(id= record['fk_request'], s3_url=record['s3_url'])
+
+
+
+async def get_response(res_id : int) -> Optional[PredictData]:
+    db = await get_connection()
+
+    qwery = """
+    SELECT s3_url
+    FROM response
+    WHERE fk_request = $1; 
+    """
+
+    record = await db.fetchrow(qwery, res_id)
+
+    if record:
+        return PredictData(id= res_id, s3_url=record['s3_url'])
+    
+    else:
+        return None
