@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 
+
+
 service MLService {
     rpc ProcessPhoto (PhotoRequest) returns (PhotoResponse);
 }
@@ -12,7 +14,10 @@ message Tag {
 message PhotoRequest {
     int64 id = 1;
     string promt = 2;
-    repeated Tag tags = 3;
+    int64 height = 3;
+    int64 widht = 4;
+    string goal = 5;
+    repeated Tag tags = 6;
 }
 
 
