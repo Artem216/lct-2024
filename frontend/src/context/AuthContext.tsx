@@ -27,9 +27,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (
-            !isAuth
-        ) navigate('/sign-in')
+        // if (
+        //     !isAuth
+        // ) navigate('/sign-in')
 
     }, [])
 
