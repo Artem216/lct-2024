@@ -1,10 +1,12 @@
-import { useRef, useEffect, MouseEvent } from "react";
+import { useRef, useEffect, MouseEvent, useState } from "react";
+import img_path from '../../assets/card_ok.png'
 
 interface Box {
     x: number;
     y: number;
     w: number;
     h: number;
+    img: HTMLImageElement;
 }
 
 interface CanvasStyle {
@@ -13,10 +15,12 @@ interface CanvasStyle {
 
 function CanvasDrag() {
     const canvas = useRef<HTMLCanvasElement>(null);
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+
     let getCtx: CanvasRenderingContext2D | null = null;
     const canBoxes: Box[] = [
-        { x: 190, y: 250, w: 120, h: 70 },
-        { x: 110, y: 115, w: 100, h: 70 },
+        { x: 190, y: 250, w: 120, h: 70, img: new Image() },
+        { x: 110, y: 115, w: 100, h: 70, img: new Image() },
     ];
     let isMoveDown: boolean = false;
     let targetCanvas: Box | null = null;
@@ -33,25 +37,34 @@ function CanvasDrag() {
     }, []);
 
     useEffect(() => {
-        canvasDraw();
+        const loadImage = (index: number, src: string) => {
+            canBoxes[index].img.src = src;
+            canBoxes[index].img.onload = () => {
+                setImageLoaded(true);
+                canvasDraw();  
+            };
+        };
+
+        loadImage(0, "src/assets/card_ok.png"); 
     }, []);
 
     const canvasDraw = () => {
-        if (getCtx && canvas.current) {
-            getCtx.clearRect(0, 0, canvas.current.clientWidth, canvas.current.clientHeight);
-            canBoxes.forEach((info) => fillCanvas(info));
+        const canvasDimensions = canvas.current;
+        if (canvasDimensions && canvasDimensions.getContext) {
+            const ctx = canvasDimensions.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, canvasDimensions.clientWidth, canvasDimensions.clientHeight);
+                ctx.fillStyle = "#FFF";
+                ctx.fillRect(0, 0, canvasDimensions.clientWidth, canvasDimensions.clientHeight);
+                canBoxes.forEach((info) => fillCanvas(ctx, info));
+            }
         }
     };
 
-    const fillCanvas = (info: Box, style: CanvasStyle = {}) => {
-        if (getCtx) {
-            const { x, y, w, h } = info;
-            const { backgroundColor = "#000000" } = style;
-
-            getCtx.beginPath();
-            getCtx.fillStyle = backgroundColor;
-            getCtx.fillRect(x, y, w, h);
-        }
+    const fillCanvas = (ctx: CanvasRenderingContext2D, info: Box) => {
+        const { x, y, w, h, img } = info;
+        console.log("here", img)
+        ctx.drawImage(img, x, y, w, h);
     };
 
     const moveableItem = (x: number, y: number): boolean => {
@@ -104,6 +117,7 @@ function CanvasDrag() {
                 onMouseUp={onMouseUp}
                 onMouseOut={onMouseOut}
                 ref={canvas}
+                style={{ border: "1px solid black" }}
             ></canvas>
         </div>
     );
