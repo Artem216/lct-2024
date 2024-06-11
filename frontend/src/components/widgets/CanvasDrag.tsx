@@ -1,6 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Stage, Layer, Text, Image as KonvaImage, Rect } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Rect } from 'react-konva';
 import useImage from 'use-image';
 import Konva from 'konva';
 
@@ -69,7 +68,7 @@ const CanvasDrag = () => {
         const image = e.target;
         const stage = image.getStage();
         const layer = image.getLayer();
-        
+
         if (stage && layer) {
             const box = image.getClientRect();
             const width = stage.width();
