@@ -15,8 +15,8 @@ from config import logger
 router = APIRouter(prefix="", tags=["find"])
 
 
-@router.get("/all_cards", response_model=List[AllCards], status_code=status.HTTP_201_CREATED)
-async def signup(
+@router.get("/all_cards", response_model=List[AllCards], status_code=status.HTTP_200_OK)
+async def find_all(
     current_user: UserDto = Depends(get_current_user),
 ) -> List[AllCards]:
     try:
@@ -29,8 +29,8 @@ async def signup(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.get("/top_pictures", response_model=List[TopCards], status_code=status.HTTP_201_CREATED)
-async def signup(
+@router.get("/top_pictures", response_model=List[TopCards], status_code=status.HTTP_200_OK)
+async def top_pictures(
     n: int,
     current_user: UserDto = Depends(get_current_user),
 ) -> List[TopCards]:

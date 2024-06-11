@@ -2,6 +2,8 @@ version: "3.8"
 
 volumes:
   pgdata:
+  zoo_data:
+  kafka_data:
 
 services:
   db:
@@ -16,6 +18,50 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper:2888:3888
+    healthcheck:
+      test: echo stat | nc localhost 2181
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - zoo_data:/var/lib/zookeeper/log
+      - zoo_data:/etc/zookeeper/secrets
+      - zoo_data:/var/lib/zookeeper/data
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    healthcheck:
+      test: ps augwwx | egrep [S]upportedKafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9091:9091"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: LISTENER_INT://kafka:29091,LISTENER_EXT://0.0.0.0:9091
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_INT://kafka:29091,LISTENER_EXT://localhost:9091
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INT:PLAINTEXT,LISTENER_EXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INT
+      ZOOKEEPER: zookeeper:2181
+    volumes:
+      - kafka_data:/mnt/shared/config
+      - kafka_data:/var/lib/kafka/data
+      - kafka_data:/etc/kafka/secrets
+
   api:
     build: ./backend/api-service
     container_name: api
@@ -25,10 +71,20 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db/dev
     depends_on:
       - db
+      - kafka
+      - zookeeper
     restart: always
 
   ml:
     build:
       context: ./backend/ml
+    environment:
+      - HF_HOME=/app/hub
     ports:
       - 50051:50051
+    depends_on:
+      - kafka
+      - zookeeper
+    volumes:
+      - ./hub:/app/hub
+    restart: always

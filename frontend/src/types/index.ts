@@ -1,10 +1,7 @@
 export interface IContextType{
-     user: IUser; 
-     setUser: React.Dispatch<React.SetStateAction<IUser>>; 
      isLoading: boolean; 
      isAuth: boolean; 
      setIsAuth: React.Dispatch<React.SetStateAction<boolean>>; 
-     checkAuthUser: () => Promise<boolean>; 
 }
 
 

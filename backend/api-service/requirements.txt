@@ -1,3 +1,4 @@
+aiokafka==0.10.0
 annotated-types==0.7.0
 anyio==4.4.0
 async-timeout==4.0.3
@@ -23,6 +24,7 @@ markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
 orjson==3.10.3
+packaging==24.0
 passlib==1.7.4
 protobuf==5.27.0
 psycopg2-binary==2.9.9
