@@ -15,18 +15,17 @@ import { useForm } from "react-hook-form"
 import { SigninValidationSchema } from "@/lib/validation"
 import { z } from "zod"
 import { useToast } from "@/components/ui/use-toast"
-import { useSingInAccount } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import Loader from "@/components/shared/Loader"
+import ApiAuth from "@/services/apiAuth"
 
 
 const SigninForm = () => {
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const { isLoading: isUserLoading , setIsAuth} = useUserContext();
   const navigate = useNavigate();
 
-  const { mutateAsync: signInAccount } = useSingInAccount();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof SigninValidationSchema>>({
@@ -39,26 +38,20 @@ const SigninForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof SigninValidationSchema>) {
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
-    })
-
-    // if (!session) {
-    //   return toast({
-    //     title: "Sign in failed. Please try again",
-    //   })
-    // }
-
-    const isLoggedIn = await checkAuthUser();
-
-    if (isLoggedIn) {
+    try {
+      await ApiAuth.loginUser({
+        username: values.email,
+        password: values.password,
+      })
+      setIsAuth(true);
       form.reset();
       navigate('/');
-    } else {
-      return toast(
-        { title: 'Sign in failed. Please try again' }
-      )
+    }
+    catch (error) {
+      return toast({
+        title: "Ошибка авторизации. Попробуйте снова",
+        variant: "destructive",
+      })
     }
   }
 
