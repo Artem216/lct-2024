@@ -57,6 +57,11 @@ export const topbarLinks = [
     },
     {
         imgURL: "/assets/icons/wallpaper.svg",
+        route: "/generator",
+        label: "Генератор",
+    },
+    {
+        imgURL: "/assets/icons/wallpaper.svg",
         route: "/editor",
         label: "Конструктор",
     },

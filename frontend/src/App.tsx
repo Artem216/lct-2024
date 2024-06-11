@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css'
 import AuthLayout from './_auth/AuthLayout'
 import RootLayout from './_root/RootLayout'
+import Generator from './_root/pages/Generator'
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         {/* private routes */}
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
+          <Route path='/generator' element={<Generator />} />
           <Route path='/editor' element={<Editor />} />
           {/* <Route path='/posts/:id' element={<PostDetails />}/>
           <Route path='/profile/:id/*' element={<Profile />}/> */}
