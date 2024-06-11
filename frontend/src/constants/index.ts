@@ -97,5 +97,22 @@ export const imageByCategory = [
         route: "/my-images",
         title: "Вклады",
     },
-
+    {
+        imgURL: "/assets/money_house.png",
+        color: "#FFC1A4",
+        route: "/my-images",
+        title: "Ипотека",
+    },
+    {
+        imgURL: "/assets/card_ok.png",
+        color: "#FFC1A4",
+        route: "/my-images",
+        title: "Кредиты",
+    },
+    {
+        imgURL: "/assets/shield.png",
+        color: "#476BF0",
+        route: "/my-images",
+        title: "Вклады",
+    },
 ];

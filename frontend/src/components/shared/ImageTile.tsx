@@ -11,7 +11,7 @@ function ImageTile(imageProps: ImageTileProps) {
 
     return (
         <>
-            <div className={`flex-col justify-between`}>
+            <div className='flex-col justify-between mx-auto'>
                 <div style={{ backgroundColor: color }} className="rounded-2xl drop-shadow-lg  w-[200px] h-[200px]">
                     <img src={imgSrc} alt={title} />
                 </div>

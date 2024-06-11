@@ -115,7 +115,7 @@ const SignupForm = () => {
           />
           <div className="flex justify-between px-[5%] mt-2">
             <p className="text-small-regular text-dark-1 text-center mt-2">
-              <Link to="/sign-up" className="text-dark-1 underline text-small-semibold ml-1">Войти</Link>
+              <Link to="/sign-in" className="text-dark-1 underline text-small-semibold ml-1">Войти</Link>
             </p>
             <Button type="submit" className="shad-button_primary px-[15%]">
               {isUserLoading ? (
