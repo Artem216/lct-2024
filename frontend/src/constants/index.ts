@@ -156,3 +156,9 @@ export const ProductSelectValues: IConstant[] = [
     { 'IZP': 'Индивидуальный зарплатный проект' },
     { 'CURR_EXC': 'Обмен валюты' },
 ]
+
+export const imageTypeValues: IConstant[] = [
+    {'megabanner' : 'Megabanner'},
+    {'ghost' : 'Ghost'},
+    {'nbo' : 'NBO'},
+]
