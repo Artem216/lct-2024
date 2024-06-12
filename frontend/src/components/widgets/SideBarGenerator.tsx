@@ -19,7 +19,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react"
 import { Textarea } from "../ui/textarea"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import ApiAuth from "@/services/apiAuth"
 import ApiImage from "@/services/apiImage"
 
 type CheckedState = boolean | 'indeterminate';
