@@ -1,8 +1,15 @@
-import React from 'react'
+import SideBarGenerator from "@/components/widgets/SideBarGenerator"
+import { GeneratorParametersProvider } from "../../context/GeneratorParametersContext"
 
 const Generator = () => {
   return (
-    <div>Generator</div>
+    <>
+      <GeneratorParametersProvider>
+        <div className="h-full bg-primary-500">
+          <SideBarGenerator />
+        </div>
+      </GeneratorParametersProvider>
+    </>
   )
 }
 
