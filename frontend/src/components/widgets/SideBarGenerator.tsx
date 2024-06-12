@@ -14,22 +14,28 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { Input } from "../ui/input"
 import GeneratorSelect from "../shared/GeneratorSelect"
-import { ChannelSelectValues, imageTypeValues } from "@/constants"
+import { ChannelSelectValues, ProductSelectValues, imageTypeValues } from "@/constants"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react"
 import { Textarea } from "../ui/textarea"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import ApiImage from "@/services/apiImage"
+import { useGeneratorImages } from "@/context/GeneratorImagesContext"
 
 type CheckedState = boolean | 'indeterminate';
 
 
 const SideBarGenerator = () => {
     const topBarHeight = 60;
-    const maxLengthSymbols = 500;
+    const maxLengthSymbols = 100;
     const [lengthSymbols, setLengthSymbols] = useState(0);
     const [checkPrompt, setCheckPrompt] = useState<CheckedState>(false);
     const [checkColor, setCheckColor] = useState<CheckedState>(false);
+
+    const { setIsStartGeneration, setImgHeight, setImgWidth,
+        setImgNumber, setGeneratedImages
+    } = useGeneratorImages();
+
 
     const FormSchema = z.object({
         product: z
@@ -76,12 +82,15 @@ const SideBarGenerator = () => {
             width: 512,
             height: 512,
             imageNumber: 1,
+            prompt: "",
+            imageType: "megabanner"
         },
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log("here")
         try {
-            await ApiImage.generate({
+            const response = await ApiImage.generate({
                 n_variants: data.imageNumber,
                 prompt: data.prompt,
                 width: data.width,
@@ -98,6 +107,11 @@ const SideBarGenerator = () => {
 
             })
             form.reset();
+            setIsStartGeneration(true);
+            setImgHeight(data.height);
+            setImgWidth(data.width);
+            setImgNumber(data.imageNumber);
+            setGeneratedImages(response);
         }
         catch (error) {
             return toast({
@@ -126,7 +140,7 @@ const SideBarGenerator = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <GeneratorSelect onSelectChange={field.onChange}
-                                    selectTitle="Продукт" selectValues={ChannelSelectValues} />
+                                    selectTitle="Продукт" selectValues={ProductSelectValues} />
                                 <FormMessage className="shad-form_message" />
                             </FormItem>
                         )}
@@ -187,25 +201,29 @@ const SideBarGenerator = () => {
                             control={form.control}
                             name="imageType"
                             render={({ field }) => (
-                                <RadioGroup
-                                    onValueChange={field.onChange}
-                                    defaultValue="megabanner"
-                                    className="flex flex-col space-y-1 text-black m-5"
-                                >
-                                    {imageTypeValues.map((valueSelect) => {
-                                        const [key, value] = Object.entries(valueSelect)[0];
-                                        return (
-                                            <FormItem className="flex items-center space-x-3 space-y-0">
-                                                <FormControl>
-                                                    <RadioGroupItem value={key} />
-                                                </FormControl>
-                                                <FormLabel className="font-normal">
-                                                    {value}
-                                                </FormLabel>
-                                            </FormItem>
-                                        )
-                                    })}
-                                </RadioGroup>
+                                <FormItem>
+
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue="megabanner"
+                                        className="flex flex-col space-y-1 text-black m-5"
+                                    >
+                                        {imageTypeValues.map((valueSelect) => {
+                                            const [key, value] = Object.entries(valueSelect)[0];
+                                            return (
+                                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <RadioGroupItem value={key} />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">
+                                                        {value}
+                                                    </FormLabel>
+                                                </FormItem>
+                                            )
+                                        })}
+                                    </RadioGroup>
+                                    <FormMessage className="shad-form_message" />
+                                </FormItem>
                             )}
                         />
                         <div className="w-[140px] mx-8">
@@ -324,8 +342,7 @@ const SideBarGenerator = () => {
                         </div>
                     </div>
 
-                    <Button type="submit"
-                        className="shad-button_primary px-5 mx-auto mt-10">
+                    <Button type="submit" className="shad-button_primary px-5 mx-auto mt-10">
                         Сгенерировать
                     </Button>
                 </form>

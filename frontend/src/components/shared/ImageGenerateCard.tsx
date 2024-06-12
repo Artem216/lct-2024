@@ -5,18 +5,27 @@ import IconButton from './IconButton';
 import cross_path from '../../assets/cross.png';
 import tick_path from '../../assets/tick.png';
 import repeat_path from '../../assets/repeat.png';
+import { LoadingSkeleton } from './LoadingSkeleton';
 
 interface ImageCardProps {
     imgSrc: string;
+    status: string;
+    imgWidth: number;
+    imgHeight: number;
 }
 
-const ImageGenerateCard = ({ imgSrc }: ImageCardProps) => {
+const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight }: ImageCardProps) => {
     const { toast } = useToast();
+    console.log(imgHeight, imgWidth)
 
     return (
         <div className="flex flex-col justify-between h-[500px] max-w-[500px] border-[2px] border-solid border-secondary-500 rounded-[25px] mx-auto p-3">
             <div className="relative flex-grow rounded-[25px] overflow-hidden">
-                <img src={imgSrc} alt="generated image" className="object-contain w-full h-full" />
+                {status === "complete" ? (
+                    <img src={imgSrc} alt="generated image" className="object-contain w-full h-full" />
+                ) : (
+                    <LoadingSkeleton width={imgWidth} height={imgHeight}/>
+                )}
             </div>
             <div className="flex justify-between items-center mt-3 mx-3">
                 <div className='flex gap-5'>

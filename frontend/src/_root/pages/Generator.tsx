@@ -1,16 +1,16 @@
 import SideBarGenerator from "@/components/widgets/SideBarGenerator"
-import { GeneratorParametersProvider } from "../../context/GeneratorParametersContext"
+import { GeneratorImagesProvider } from "@/context/GeneratorImagesContext"
 import GeneratedImages from "@/components/widgets/GeneratedImages"
 
 const Generator = () => {
   return (
     <>
-      <GeneratorParametersProvider>
+      <GeneratorImagesProvider>
         <div className="h-full">
           <SideBarGenerator />
           <GeneratedImages />
         </div>
-      </GeneratorParametersProvider>
+      </GeneratorImagesProvider>
     </>
   )
 }

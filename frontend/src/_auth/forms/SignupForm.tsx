@@ -5,7 +5,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -23,7 +22,7 @@ import ApiAuth from "@/services/apiAuth"
 
 const SignupForm = () => {
   const { toast } = useToast();
-  const { isLoading: isUserLoading , setIsAuth} = useUserContext();
+  const { isLoading: isUserLoading, setIsAuth } = useUserContext();
   const navigate = useNavigate();
 
 
