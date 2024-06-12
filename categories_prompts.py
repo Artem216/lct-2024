@@ -1,3 +1,11 @@
+category_matching = {'Кредит': ['ПК', 'TOPUP', 'REFIN', 'AUTO_SCR', 'MORTG_SCR'],
+                     'Автокредит': ['AUTO'],
+                     'Счета_вклады': ['DEPOSIT', 'SAVE_ACC', 'TRUST', 'OMS', 'INVEST'],
+                     'Страхованиe': ['ISG', 'NSG', 'INS_LIFE', 'INS_PROPERTY'],
+                     'Ипотека': ['MORTG', 'MORTG_REFIN'],
+                     'Обмен валюты': ['CURR_EXC'],
+                     'Карта': ['CC', 'IZP', 'DC', 'PREMIUM']}
+
 categories_prompts = {
     
     'Обмен валюты': ['dollar,dollar bill,arrow,coin,rubble,exchange,currency exchange',
