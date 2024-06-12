@@ -6,21 +6,12 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
-import { Link } from "react-router-dom"
 import { Input } from "../ui/input"
 import GeneratorSelect from "../shared/GeneratorSelect"
 import { ChannelSelectValues, imageTypeValues } from "@/constants"
@@ -28,7 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react"
 import { Textarea } from "../ui/textarea"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Slider } from "../ui/slider"
+import ApiAuth from "@/services/apiAuth"
+import ApiImage from "@/services/apiImage"
 
 type CheckedState = boolean | 'indeterminate';
 
@@ -81,22 +73,39 @@ const SideBarGenerator = () => {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            color: "#FFC1A4",
+            color: "#FFC1A4", //задать рандом сюда
             width: 512,
             height: 512,
             imageNumber: 1,
         },
     })
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+        try {
+            await ApiImage.generate({
+                n_variants: data.imageNumber,
+                prompt: data.prompt,
+                width: data.width,
+                height: data.height,
+                goal: data.channel,
+                tags: [
+                    {
+                        "tag": "",
+                    }
+                ],
+                product: data.product,
+                image_type: data.imageType,
+                colour: data.color
+
+            })
+            form.reset();
+        }
+        catch (error) {
+            return toast({
+                title: "Ошибка генерации. Попробуйте снова",
+                variant: "destructive",
+            })
+        }
     }
 
     const promptValue = form.watch('prompt');
