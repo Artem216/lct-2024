@@ -16,22 +16,25 @@ interface GeneratorSelectProps {
     onSelectChange: (value: string) => void;
 }
 
+
 const GeneratorSelect: React.FC<GeneratorSelectProps> = ({ onSelectChange, selectTitle, selectValues }) => {
 
     return (
         <Select onValueChange={(value) => {
             onSelectChange(value);
-        }} >
-            <SelectTrigger className="w-[180px]" style={{ color: 'black' }}>
+        }}>
+            <SelectTrigger className="m-3 max-w-[80%]"
+            style={{ color: 'black', backgroundColor: 'white' }}>
                 <SelectValue placeholder={`Выбрать ${selectTitle.toLowerCase()}`}/>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent style={{backgroundColor: 'white'}}>
                 <SelectGroup>
                     <SelectLabel>{selectTitle}</SelectLabel>
                     {selectValues.map((valueSelect, index) => {
                         const [key, value] = Object.entries(valueSelect)[0];
                         return (
-                            <SelectItem key={index} value={key} style={{ color: 'black' }}>{value}</SelectItem>
+                            <SelectItem key={index} value={key}
+                            style={{ color: 'black', backgroundColor: 'white', cursor: 'pointer' }}>{value}</SelectItem>
                         )
                     })}
                 </SelectGroup>
