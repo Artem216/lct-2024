@@ -11,10 +11,47 @@ from config import logger
 
 
 
+class Card(BaseModel):
+    id: int
+    s3_url: str
 
+async def get_card(req_id: int) -> Card:
+    """
+    Получение карточки фотографии по id
 
+    Args:
+        req_id (int): id карточки 
+
+    Returns:
+        Card: объект содержащий информацию о карточке.
+
+    """
+    db = await get_connection()
+
+    qwery = """
+    SELECT id, s3_url
+    FROM response
+    WHERE id = $1;
+    """
+
+    record = await db.fetchrow(qwery, req_id)
+
+    return Card(**record)
 
 async def get_top_cards(n : int) -> List[TopCards]:
+    # TODO: Рассмотреть возможность выдавать промт 
+    """
+    Получение списка топ-рейтинговых фотографий.
+
+    Эта асинхронная функция возвращает список из `n` фотографий, отсортированных по убыванию рейтинга.
+
+    Args:
+        n (int): Количество фотографий, которое необходимо получить.
+
+    Returns:
+        List[TopCards]: Список объектов `TopCards`, содержащих информацию о топовых фотографиях.
+
+    """
     db = await get_connection()
 
     qwery = """
@@ -51,7 +88,18 @@ async def get_top_cards(n : int) -> List[TopCards]:
     return ans 
 
 async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
-    
+    """
+    Получение списка всех фотографий.
+
+    Эта асинхронная функция возвращает список всех фотографий, доступных пользователю. Если пользователь является администратором, то возвращаются все фотографии.
+
+    Args:
+        user_id (int): Уникальный идентификатор пользователя.
+        is_admin (bool): Флаг, указывающий, является ли пользователь администратором.
+
+    Returns:
+        List[AllCards]: Список объектов `AllCards`, содержащих информацию о всех фотографиях.
+    """
     db = await get_connection()
 
     if is_admin:
@@ -86,7 +134,7 @@ async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
         features_record = await db.fetchrow(features_qwery, requests['fk_features'])
 
         response_qwery = """
-        SELECT s3_url, rating, fk_user
+        SELECT id, s3_url, rating, fk_user
         FROM response
         WHERE fk_request = $1;
         """
@@ -95,6 +143,7 @@ async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
 
         tmp = {
             "user_id" : response_record['fk_user'],
+            "req_id" : response_qwery['id'],
             "s3_url" : response_record['s3_url'],
             "rating" : response_record['rating'],
             "prompt" : features_record['prompt'],

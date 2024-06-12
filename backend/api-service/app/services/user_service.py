@@ -16,7 +16,16 @@ class GetUserResponse(BaseModel):
 
 async def add_user(signup_data: Signup) -> AddResponse:
     """
-    Добавление нового пользователя в бд
+    Добавление нового пользователя в базу данных.
+
+    Эта асинхронная функция создает нового пользователя в базе данных на основе предоставленных данных регистрации.
+    Она вставляет данные пользователя, такие как email, пароль и имя, в таблицу "users" и возвращает идентификатор созданного пользователя.
+
+    Args:
+        signup_data (Signup): Объект, содержащий данные регистрации нового пользователя, включая email, пароль и имя.
+
+    Returns:
+        AddResponse: Объект, содержащий идентификатор созданного пользователя.
     """
     db = await get_connection()
     
@@ -32,7 +41,16 @@ async def add_user(signup_data: Signup) -> AddResponse:
 
 async def get_user_by_email(email : str) -> Optional[GetUserResponse]:
     """
-    Получение id пользователя по email
+    Получение пользователя по email.
+
+    Эта асинхронная функция возвращает объект `GetUserResponse`, содержащий идентификатор и пароль пользователя,
+    соответствующего указанному email. Если пользователь не найден, функция возвращает `None`.
+
+    Args:
+        email (str): Email пользователя.
+
+    Returns:
+        Optional[GetUserResponse]: Объект `GetUserResponse`, содержащий информацию о пользователе, или `None`, если пользователь не найден.
     """
 
     db = await get_connection()

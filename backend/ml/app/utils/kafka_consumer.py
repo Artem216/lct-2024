@@ -9,6 +9,19 @@ from config import cfg, logger
 from .kafka_producer import send_predict
 
 async def consume():
+    """
+    Функция-консьюмер для обработки сообщений из Kafka.
+
+    Эта асинхронная функция запускает консьюмер для темы 'predict' в Kafka, обрабатывает поступающие сообщения и выполняет следующие действия:
+
+    1. Загружает модель.
+    2. Получает задание из сообщения, включая идентификатор задания, идентификатор пользователя, текст запроса, ширину, высоту, цель и теги.
+    3. Вызывает функцию `predict()` для генерации изображения на основе текста запроса.
+    4. Загружает сгенерированное изображение в S3.
+    5. Вызывает функцию `send_predict()` для отправки информации об успешном завершении задания.
+
+    Функция работает в бесконечном цикле, пока не будет остановлена.
+    """
     consumer = AIOKafkaConsumer(
         'predict',
         bootstrap_servers='kafka:29091',
@@ -35,7 +48,7 @@ async def consume():
             logger.info(f"Received task status from Kafka: {task_id}")
             
 
-            img = predict(model, prompt)
+            img = predict(model, prompt, goal, tags)
             
 
             bucket_name = cfg.bucket_name

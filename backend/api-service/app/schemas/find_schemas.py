@@ -5,6 +5,7 @@ from .predict_schemas import PromptTags
 
 class AllCards(BaseModel):
     user_id: int
+    req_id : int
     s3_url: str
     rating: int
     prompt: str

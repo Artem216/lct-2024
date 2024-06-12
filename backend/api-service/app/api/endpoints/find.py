@@ -19,8 +19,23 @@ router = APIRouter(prefix="", tags=["find"])
 async def find_all(
     current_user: UserDto = Depends(get_current_user),
 ) -> List[AllCards]:
-    try:
-       
+    """
+    Получение всех карточек пользователя.
+
+    Данный эндпойнт позволяет получить список всех карточек пользователя. Если пользователь является администратором,
+    он получит список карточек всех пользователей.
+
+    Args:
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[AllCards]: Список объектов AllCards, содержащих информацию о карточках.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении карточек.
+    """
+
+    try:   
         cards = await get_all_cards(current_user.id, current_user.is_admin)
         
         return cards
@@ -34,6 +49,21 @@ async def top_pictures(
     n: int,
     current_user: UserDto = Depends(get_current_user),
 ) -> List[TopCards]:
+    """
+    Получение N самых популярных карточек.
+
+    Данный эндпойнт позволяет получить список N самых популярных (с наивысшим рейтингом) карточек.
+
+    Args:
+        n (int): Количество карточек, которое необходимо получить.
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[TopCards]: Список объектов TopCards, содержащих информацию о самых популярных карточках.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении списка популярных карточек.
+    """
     try:
         
         cards = await get_top_cards(n)
