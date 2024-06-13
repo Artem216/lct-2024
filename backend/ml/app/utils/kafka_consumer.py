@@ -2,11 +2,19 @@ from aiokafka import AIOKafkaConsumer
 import asyncio
 import json
 
-from .model_utils import load_model, predict
+from .model_utils import Model, Request
 from .s3_utils import upload_fileobj_to_s3, get_minio_client
 from config import cfg, logger
 
 from .kafka_producer import send_predict
+
+
+
+
+weights = {"./weights/GAZPROM_lora_blue_orange.safetensors": 0.2,
+           "./weights/GAZPROM_lora.safetensors": 0.6,
+           "./weights/GAZPROM_lora_add_card.safetensors": 0.2}
+
 
 async def consume():
     """
@@ -28,8 +36,8 @@ async def consume():
         auto_offset_reset='latest'
     )
 
-    model = load_model()
-
+    model = Model(weights=weights)
+    req = Request(model)
     await consumer.start()
     try:
         logger.info("Starting Kafka consumer")
@@ -39,6 +47,7 @@ async def consume():
             task_id = task["id"]
             user_id = task['user_id']
             prompt = task['prompt']
+            product = task['product']
             width = task['width']
             height = task['height']
             goal = task['goal']
@@ -48,7 +57,7 @@ async def consume():
             logger.info(f"Received task status from Kafka: {task_id}")
             
 
-            img = predict(model, prompt, goal, tags)
+            img = req.create_imgs(n=1 ,prompt=prompt, product=product)
             
 
             bucket_name = cfg.bucket_name

@@ -120,18 +120,19 @@ async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
 
         record = await db.fetch(qwery, user_id)
     
-    logger.info(record)
 
     ans = []
 
     for requests in record:
 
         features_qwery = """
-        SELECT prompt, height, widht, goal, tags
+        SELECT prompt, height, widht, goal, tags, colour, product, image_type
         FROM features
         WHERE id = $1;
         """
+
         features_record = await db.fetchrow(features_qwery, requests['fk_features'])
+
 
         response_qwery = """
         SELECT id, s3_url, rating, fk_user
@@ -141,9 +142,12 @@ async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
 
         response_record = await db.fetchrow(response_qwery, requests['id'])
 
+
+
+
         tmp = {
             "user_id" : response_record['fk_user'],
-            "req_id" : response_qwery['id'],
+            "req_id" : response_record['id'],
             "s3_url" : response_record['s3_url'],
             "rating" : response_record['rating'],
             "prompt" : features_record['prompt'],
@@ -152,7 +156,7 @@ async def get_all_cards(user_id : int, is_admin: bool) -> List[AllCards]:
             "goal" : features_record['goal'],
             "tags" : [PromptTags(tag = el ) for el in features_record['tags'].split("+")]
         }
-        
+
         ans.append(AllCards(**tmp))
 
     return ans

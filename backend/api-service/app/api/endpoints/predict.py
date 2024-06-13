@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 
 from schemas.user_schemas import UserDto
 from db.dependencies import get_current_user
@@ -9,6 +9,8 @@ from services.find_service import get_card
 from utils.kafka_producer import send_task, send_image_to_image_task
 
 from typing import List, Optional
+
+import asyncio
 
 # import grpc
 # import proto.service_pb2_grpc as pb2_grpc
@@ -113,9 +115,9 @@ async def image_to_image(
 
 @router.get("/photo_by_id", status_code=status.HTTP_200_OK)
 async def get_photo_by_id(
-    id: int,
+    q: List[int] = Query(None),
     current_user: UserDto = Depends(get_current_user),
-) -> Optional[PredictData]:
+) -> List[PredictData]:
     """
     Получение карточки по идентификатору.
 
@@ -127,13 +129,17 @@ async def get_photo_by_id(
         current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
 
     Returns:
-        Optional[PredictData]: Объект PredictData, содержащий информацию о карточке, или None, если карточка не найдена.
+        List[PredictData]: Объект PredictData, содержащий информацию о карточке, или None, если карточка не найдена.
     """
-    ans = await get_response(id)
+    try:
+        if q:
+            result = await asyncio.gather(*[ get_response(id) for id in q ])
 
-    if ans:
-        return ans
-    else:
-        return None
-    
+        if result:
+            return result
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Error occurred during predict request: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))    
 

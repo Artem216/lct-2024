@@ -5,28 +5,28 @@ from typing import List
 
 
 product_map = {
-    "ПК" : "credit",
-    "TOPUP" : "credit",
-    "REFIN" : "credit",
-    "СС" : "credit",
-    "AUTO_SCR" : "credit",
-    "MORTG_SCR" : "credit",
-    "AUTO" : "car loan",
-    "MORTG" : "mortgage",
-    "MORTG_REFI" : "mortgage",
-    "DEPOSIT" : "investments",
-    "SAVE_ACC" : "investments",
-    "INVEST" : "investments",
-    "TRUST" : "investments",
-    "OMS" : "investments",
-    "IZP" : "cards",
-    "DC" : "cards",
-    "PREMIUM" : "cards",
-    "ISG" : "insurance",
-    "NSG" : "insurance",
-    "INS_LIFE" : "insurance",
-    "INS_PROPERTY": "insurance",
-    "CURR_EXC" : "currency exchange"
+    "ПК" : "Кредит",
+    "TOPUP" : "Кредит",
+    "REFIN" : "Кредит",
+    "CC" : "Кредит",
+    "AUTO_SCR" : "Кредит",
+    "MORTG_SCR" : "Кредит",
+    "AUTO" : "Автокредит",
+    "MORTG" : "Ипотека",
+    "MORTG_REFI" : "Ипотека",
+    "DEPOSIT" : "Счета_вклады",
+    "SAVE_ACC" : "Счета_вклады",
+    "INVEST" : "Счета_вклады",
+    "TRUST" : "Счета_вклады",
+    "OMS" : "Счета_вклады",
+    "IZP" : "Карта",
+    "DC" : "Карта",
+    "PREMIUM" : "Карта",
+    "ISG" : "Страхованиe",
+    "NSG" : "Страхованиe",
+    "INS_LIFE" : "Страхованиe",
+    "INS_PROPERTY": "Страхованиe",
+    "CURR_EXC" : "Обмен валюты"
 } 
 
 
@@ -53,8 +53,8 @@ class PredictRequest(BaseModel):
     goal: str
     tags: List[PromptTags]
     product: str
-    image_tpe: str
-    color: str
+    image_type: str
+    colour: str
 
 
 
@@ -65,4 +65,5 @@ class PredictResponse(BaseModel):
 
 class PredictData(BaseModel):
     id: int
+    status: str
     s3_url: str

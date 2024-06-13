@@ -5,6 +5,8 @@ import logging
 
 from schemas.predict_schemas import PredictRequest
 
+from schemas.predict_schemas import product_map
+
 from config import logger
 
 async def send_task(task_id : int, predict_data : PredictRequest, user_id: int):
@@ -20,10 +22,11 @@ async def send_task(task_id : int, predict_data : PredictRequest, user_id: int):
             "height" : predict_data.height,
             "goal" : predict_data.goal,
             "tags" : [el.tag for el in predict_data.tags] ,
-            "product" : predict_data.product,
-            "image_tpe" : predict_data.image_tpe,
-            "color" : predict_data.color
+            "product" : product_map[predict_data.product],
+            "image_tpe" : predict_data.image_type,
+            "color" : predict_data.colour
             }
+        
         logger.info(f"Sending task to Kafka: {task}")
         await producer.send_and_wait('predict', key=str(task_id).encode('utf-8'), value=json.dumps(task).encode('utf-8'))
     

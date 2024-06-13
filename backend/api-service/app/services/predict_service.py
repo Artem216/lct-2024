@@ -35,7 +35,7 @@ async def add_request(user_id : int, predict_data : PredictRequest) -> AddReques
     db = await get_connection()
 
     qwery_features = """
-    INSERT INTO features (prompt, height, widht, goal , tags, product, image_tpe, color)
+    INSERT INTO features (prompt, height, widht, goal , tags, product, image_type, colour)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING id;
     """
@@ -47,8 +47,8 @@ async def add_request(user_id : int, predict_data : PredictRequest) -> AddReques
                                         predict_data.goal,
                                         '+'.join([el.tag for el in predict_data.tags]),
                                         predict_data.product,
-                                        predict_data.image_tpe,
-                                        predict_data.color )
+                                        predict_data.image_type,
+                                        predict_data.colour )
 
     qwery_req = """
     INSERT INTO requests (status, fk_features, fk_user) 
@@ -114,7 +114,7 @@ async def get_response(res_id : int) -> Optional[PredictData]:
     record = await db.fetchrow(qwery, res_id)
 
     if record:
-        return PredictData(id= res_id, s3_url=record['s3_url'])
+        return PredictData(id= res_id,status= "complete", s3_url=record['s3_url'])
     
     else:
-        return None
+        return PredictData(id= res_id,status= "in progress", s3_url="...")
