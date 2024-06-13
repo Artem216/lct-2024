@@ -81,4 +81,4 @@ async def login(
             detail="Incorrect password",
         )
     access_token = create_access_jwt(user.id)
-    return AccessToken(access_token=access_token)
+    return AccessToken(access_token=access_token, is_admin= user.is_admin)

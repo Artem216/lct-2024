@@ -35,7 +35,7 @@ async def add_request(user_id : int, predict_data : PredictRequest) -> AddReques
     db = await get_connection()
 
     qwery_features = """
-    INSERT INTO features (prompt, height, widht, goal , tags, product, image_type, colour)
+    INSERT INTO features (prompt, height, width, goal , tags, product, image_type, colour)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING id;
     """
@@ -61,7 +61,12 @@ async def add_request(user_id : int, predict_data : PredictRequest) -> AddReques
     return AddRequestData(id= req_record['id'],status="In progress")
 
 
-async def add_response(req_id : str, s3_url : str, user_id: int) -> AddResponseData:
+async def add_response(req_id : str, 
+                       child_s3_url : str,
+                       parent_s3_url :str,
+                       x: int,
+                       y: int,
+                       user_id: int) -> AddResponseData:
     """
     Добавление нового ответа в базу данных.
 
@@ -69,7 +74,10 @@ async def add_response(req_id : str, s3_url : str, user_id: int) -> AddResponseD
 
     Args:
         req_id (str): Уникальный идентификатор запроса, к которому привязан ответ.
-        s3_url (str): URL-адрес S3, по которому доступен ответ.
+        child_s3_url (str): URL-адрес S3, по которому доступна фотграфия без фона.
+        parent_s3_url (str): URL-адрес S3, по которому доступна фотграфия с фоном.
+        x (int) : x координата нахождения ребёнка на фотграфии родителя.
+        y (int) : y координата нахождения ребёнка на фотграфии родителя.
         user_id (int): Уникальный идентификатор пользователя, создавшего ответ.
 
     Returns:
@@ -78,18 +86,18 @@ async def add_response(req_id : str, s3_url : str, user_id: int) -> AddResponseD
     db = await get_connection()
 
     qwery = """
-    INSERT INTO response (s3_url, fk_request, rating, fk_user)
-    VALUES ($1, $2, 0, $3)
-    RETURNING fk_request, s3_url;
+    INSERT INTO response (child_s3_url, parent_s3_url, x, y, fk_request, rating, fk_user)
+    VALUES ($1, $2, $3, $4, $5, 0, $6)
+    RETURNING fk_request, child_s3_url;
     """
 
-    record = await db.fetchrow(qwery, s3_url, req_id, user_id)
+    record = await db.fetchrow(qwery, child_s3_url, parent_s3_url, x, y, req_id, user_id)
 
-    return AddResponseData(id= record['fk_request'], s3_url=record['s3_url'])
+    return AddResponseData(id= record['fk_request'], s3_url=record['child_s3_url'])
 
 
 
-async def get_response(res_id : int) -> Optional[PredictData]:
+async def get_response(res_id : int) -> PredictData:
     """
     Получение информации об ответе по его идентификатору.
 
@@ -100,13 +108,13 @@ async def get_response(res_id : int) -> Optional[PredictData]:
         res_id (int): Уникальный идентификатор ответа.
 
     Returns:
-        Optional[PredictData]: Объект `PredictData`, содержащий информацию об ответе, или `None`, если ответ не найден.
+        PredictData: Объект `PredictData`, содержащий информацию об ответе.
     """
 
     db = await get_connection()
 
     qwery = """
-    SELECT s3_url
+    SELECT child_s3_url, parent_s3_url, x, y, rating
     FROM response
     WHERE fk_request = $1; 
     """
@@ -114,7 +122,19 @@ async def get_response(res_id : int) -> Optional[PredictData]:
     record = await db.fetchrow(qwery, res_id)
 
     if record:
-        return PredictData(id= res_id,status= "complete", s3_url=record['s3_url'])
+        return PredictData(id= res_id,
+                           status= "complete", 
+                           child_s3_url= record['child_s3_url'],
+                           parent_s3_url= record['parent_s3_url'],
+                           x = record['x'],
+                           y = record['y'],
+                           rating = record['rating'])
     
     else:
-        return PredictData(id= res_id,status= "in progress", s3_url="...")
+        return PredictData(id= res_id,
+                           status= "in progress",
+                           child_s3_url= "...",
+                           parent_s3_url= "...",
+                           x = 0,
+                           y = 0,
+                           rating = 0)

@@ -10,7 +10,7 @@ class Config(BaseSettings):
     server_port: int = 8000
 
     postgres_user: str ="postgres"
-    postgres_password: str ="postgres"
+    postgres_password: str = "xxQw1na7bh"
     postgres_host: str = "db"
     postgres_db: str = "dev"
     postgres_port: int = 5432

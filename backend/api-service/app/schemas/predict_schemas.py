@@ -66,4 +66,8 @@ class PredictResponse(BaseModel):
 class PredictData(BaseModel):
     id: int
     status: str
-    s3_url: str
+    child_s3_url: str
+    parent_s3_url: str
+    x : int
+    y : int
+    rating : int

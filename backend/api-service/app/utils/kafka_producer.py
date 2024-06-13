@@ -23,8 +23,8 @@ async def send_task(task_id : int, predict_data : PredictRequest, user_id: int):
             "goal" : predict_data.goal,
             "tags" : [el.tag for el in predict_data.tags] ,
             "product" : product_map[predict_data.product],
-            "image_tpe" : predict_data.image_type,
-            "color" : predict_data.colour
+            "image_type" : predict_data.image_type,
+            "colour" : predict_data.colour
             }
         
         logger.info(f"Sending task to Kafka: {task}")

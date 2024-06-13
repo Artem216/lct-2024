@@ -42,7 +42,7 @@ class Model:
         return result
     
     def remove_bg(self, img):
-        return remove(img)
+        return remove(img, post_process_mask=True)
         
 
     def save_image_to_bytes(self, image):

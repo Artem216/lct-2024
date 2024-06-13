@@ -12,7 +12,7 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: xxQw1na7bh
       POSTGRES_DB: dev
     ports:
       - "5432:5432"

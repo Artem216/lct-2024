@@ -12,6 +12,7 @@ class AddResponse(BaseModel):
 class GetUserResponse(BaseModel):
     id: int
     password: str
+    is_admin: bool
 
 
 async def add_user(signup_data: Signup) -> AddResponse:
@@ -56,7 +57,7 @@ async def get_user_by_email(email : str) -> Optional[GetUserResponse]:
     db = await get_connection()
 
     query = """
-    SELECT id, password
+    SELECT id, password, is_admin
     FROM users
     WHERE email = $1;
     """

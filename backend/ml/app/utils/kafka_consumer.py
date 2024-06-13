@@ -8,8 +8,7 @@ from config import cfg, logger
 
 from .kafka_producer import send_predict
 
-
-
+from .photo_utils import add_image_on_background
 
 weights = {"./weights/GAZPROM_lora_blue_orange.safetensors": 0.2,
            "./weights/GAZPROM_lora.safetensors": 0.6,
@@ -48,9 +47,12 @@ async def consume():
             user_id = task['user_id']
             prompt = task['prompt']
             product = task['product']
+            colour = task['colour']
+            image_type = task['image_type']
             width = task['width']
             height = task['height']
             goal = task['goal']
+            # TODO: придумать что делать с тегами.
             tags = task['tags'] 
 
 
@@ -59,12 +61,32 @@ async def consume():
 
             img = req.create_imgs(n=1 ,prompt=prompt, product=product)
             
-
-            bucket_name = cfg.bucket_name
+            bucket_name = cfg.bucket_name_1
             object_name = f"output_image{task_id}.png"
-            url = upload_fileobj_to_s3(img, bucket_name, object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
+            child_url = upload_fileobj_to_s3(img, bucket_name, object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
+            
+            parent_img, coordinates = add_image_on_background(
+                foreground_bytes = img,
+                background_color = colour,
+                position_mode = image_type,
+                width = width,
+                height= height)
 
-            await send_predict(task_id= task_id, status="complete", s3_url=url, user_id= user_id)
+            
+
+
+            parent_bucket_name = cfg.bucket_name_2
+            parent_object_name = f"parent_output_image{task_id}.png"
+            parent_url = upload_fileobj_to_s3(parent_img, parent_bucket_name, parent_object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
+ 
+
+            await send_predict(task_id= task_id, 
+                               status="complete", 
+                               child_s3_url=child_url, 
+                               parent_s3_url= parent_url, 
+                               user_id= user_id, 
+                               coordinates= coordinates
+                               )
     finally:
         await consumer.stop()
 

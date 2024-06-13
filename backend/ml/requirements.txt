@@ -60,3 +60,4 @@ translate
 peft
 rembg
 matplotlib
+pillow

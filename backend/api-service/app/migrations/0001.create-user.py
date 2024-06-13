@@ -12,7 +12,7 @@ CREATE TABLE features (
             id SERIAL PRIMARY KEY,
             prompt VARCHAR(255) NOT NULL,
             height INT NOT NULL,
-            widht INT NOT NULL,
+            width INT NOT NULL,
             goal VARCHAR(255) NOT NULL,
             colour VARCHAR(255) NOT NULL,
             product VARCHAR(255) NOT NULL,
@@ -33,7 +33,10 @@ CREATE TABLE requests (
 
 CREATE TABLE response (
             id SERIAL PRIMARY KEY,
-            s3_url TEXT NOT NULL,
+            child_s3_url TEXT NOT NULL,
+            parent_s3_url TEXT NOT NULL,
+            x INT NOT NULL,
+            y INT NOT NULL,
             rating INT, 
             fk_request INT,
             fk_user INT,
@@ -57,7 +60,7 @@ steps = [
     step(f"INSERT INTO users (name, password, email, is_admin) VALUES ('test', '{get_password_hash('test')}', 'test@test.com', false);"),
 
     
-    step("CREATE TABLE features ( id SERIAL PRIMARY KEY, prompt VARCHAR(255) NOT NULL, height INT NOT NULL, widht INT NOT NULL, goal VARCHAR(255) NOT NULL, colour VARCHAR(255) NOT NULL, product VARCHAR(255) NOT NULL, image_type VARCHAR(255) NOT NULL, tags VARCHAR(255))",
+    step("CREATE TABLE features ( id SERIAL PRIMARY KEY, prompt VARCHAR(255) NOT NULL, height INT NOT NULL, width INT NOT NULL, goal VARCHAR(255) NOT NULL, colour VARCHAR(255) NOT NULL, product VARCHAR(255) NOT NULL, image_type VARCHAR(255) NOT NULL, tags VARCHAR(255))",
         "DROP TABLE features"),
     
     
@@ -65,6 +68,6 @@ steps = [
         "DROP TABLE requests"),
     
     
-    step("CREATE TABLE response ( id SERIAL PRIMARY KEY, s3_url text NOT NULL, fk_request INT, rating INT, fk_user INT, FOREIGN KEY (fk_request) REFERENCES requests(id), FOREIGN KEY (fk_user) REFERENCES users(id))",
+    step("CREATE TABLE response ( id SERIAL PRIMARY KEY, child_s3_url TEXT NOT NULL, parent_s3_url TEXT NOT NULL, x INT NOT NULL, y INT NOT NULL, fk_request INT, rating INT, fk_user INT, FOREIGN KEY (fk_request) REFERENCES requests(id), FOREIGN KEY (fk_user) REFERENCES users(id))",
         "DROP TABLE response")
 ]

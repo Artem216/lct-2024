@@ -12,7 +12,8 @@ class Config(BaseSettings):
 
     ACCESS_KEY: str = os.getenv("ACCESS_KEY")
     SECRET_KEY: str = os.getenv("SECRET_KEY")
-    bucket_name: str = os.getenv("bucket_name")
+    bucket_name_1: str = os.getenv("bucket_name_1")
+    bucket_name_2: str = os.getenv("bucket_name_2")
     S3_HOST: str = os.getenv("S3_HOST")
 
 cfg = Config() 
