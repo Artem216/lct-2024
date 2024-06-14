@@ -6,13 +6,17 @@ import numpy as np
 
 def generate_prompt_dataset(data):
 
-    data = data.to_dict()
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    
     new_data = {}
 
     if np.isnan(data['gender']) == False:
         new_data['gender'] = ['man', 'woman'][int(data['gender'])]
     
-    new_data['age'] = 'age ' + str(int(data['age']))
+    if np.isnan(data['age']) == False:
+        new_data['age'] = 'age ' + str(int(data['age']))
     
     if np.isnan(data['app_vehicle_ind']) == False:
         new_data['app_vehicle_ind'] = 'have car'
@@ -35,7 +39,7 @@ def generate_prompt_dataset(data):
         new_data['gas_station'] = 'have' if data['cnt_tr_oil_3m'] > 0 else 'have not'
         new_data['gas_station'] +=  ' expenses for gas station'
     
-    if np.isnan(data['cnt_tr_oil_3m']) == False:
+    if np.isnan(data['sum_zp_12m']) == False:
         new_data['salary'] = 'low' if data['sum_zp_12m'] < 122298 else ('high' if data['sum_zp_12m'] > 867959 else 'medium') 
         new_data['salary'] += ' salary'
 
@@ -55,9 +59,6 @@ def generate_prompt_dataset(data):
     prompt: credit card,card,pink diamond,orange confetti\n\n'
     
     MEETING += 'your info: ' + INFO_USER + '\nprompt:'
-
-    print(INFO_USER)
-    # print(MEETING)
     
     data = {"model": "llama3", "prompt": MEETING, "options": {"temperature": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
     
@@ -85,4 +86,28 @@ def generate_prompt_dataset(data):
                     ready += [i]
             return ','.join(ready)
         
-        print(process(ans))
+        return process(ans), INFO_USER
+
+
+def agregate_users(df):
+    if len(df) > 1: 
+        age = df.age.mean()
+        gender = df.gender.mode()[0]
+        car = df.app_vehicle_ind.mode()[0]
+        transactions = df.cnt_tr_all_3m.mean()
+        purchases = df.cnt_tr_buy_3m.mean()
+        mobile = df.cnt_tr_mobile_3m.mean()
+        oil = df.cnt_tr_oil_3m.mean()
+        salary = df.sum_zp_12m.mean()
+        data = {'gender': gender, 'age': age, 'app_vehicle_ind': car, 'cnt_tr_all_3m': transactions, 'cnt_tr_buy_3m': purchases, 'cnt_tr_mobile_3m': mobile, 'cnt_tr_oil_3m': oil, 'sum_zp_12m': salary}
+    else:
+        data = df.iloc[0].to_dict()
+
+    prompt, info_user = generate_prompt_dataset(data)
+    return len(df), prompt, info_user
+    
+
+def prompt_dataset_pipeline(path_to_csv):
+    df = pd.read_csv(path_to_csv) 
+    length, prompt, info_user = agregate_users(df)
+    print(f'Количество пользователей: {length}, prompt: {prompt}, info: {info_user}')
