@@ -8,7 +8,7 @@ LLAMA_SERVER = 'http://localhost:11434/api/generate'
 TEMPERATURE = 1.2    # отвечает за вариативность и длину генерации
 MODEL = 'llama3'
 
-def generate_prompt_dataset(data):
+def generate_prompt_dataset(data, num_tags):
 
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -76,7 +76,7 @@ def generate_prompt_dataset(data):
         
         ans = re.sub(r'[^a-zA-Z, ]', '', ans.split('PROMPT')[-1].split('prompt:')[-1].split("END")[0])
 
-        def process(ans):
+        def process(ans, num_tags):
             array = ans.split(',')
             ready = []
             for i in array:
@@ -88,12 +88,17 @@ def generate_prompt_dataset(data):
                     while not(i[-1].isalpha()):
                         i = i[:-1]
                     ready += [i]
+            
+            if len(ready) > num_tags:
+                ready = np.array(ready)
+                np.random.shuffle(ready)
+                ready = ready[:num_tags].tolist()
             return ','.join(ready)
         
-        return process(ans), INFO_USER
+        return process(ans, num_tags), INFO_USER
 
 
-def agregate_users(df):
+def agregate_users(df, num_tags):
     if len(df) > 1: 
         age = df.age.mean()
         gender = df.gender.mode()[0]
@@ -107,11 +112,11 @@ def agregate_users(df):
     else:
         data = df.iloc[0].to_dict()
 
-    prompt, info_user = generate_prompt_dataset(data)
+    prompt, info_user = generate_prompt_dataset(data, num_tags)
     return len(df), prompt, info_user
     
 
-def prompt_dataset_pipeline(path_to_csv):
+def prompt_dataset_pipeline(path_to_csv, num_tags = 3): # Можно регулировать количество тегов
     df = pd.read_csv(path_to_csv) 
-    length, prompt, info_user = agregate_users(df)
-    print(f'Количество пользователей: {length}, prompt: {prompt}, info: {info_user}')
+    length, prompt, info_user = agregate_users(df, num_tags)
+    print(f'Количество пользователей: {length},\nprompt: {prompt}\ninfo: {info_user}')
