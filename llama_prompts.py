@@ -13,6 +13,8 @@
 #   },
 # ])
 
+# %%time
+
 %%time
 
 import requests
@@ -23,6 +25,10 @@ import sys
 import datetime
 import random
 import numpy as np
+
+LLAMA_SERVER = 'http://localhost:11434/api/generate'
+MODEL = 'llama3'
+TEMPERATURE = 1.2  # отвечает за длину и вариативность генерации
 
 salt = 'lct_gazprombank_june_2024_picture_generation'
 
@@ -65,14 +71,14 @@ def process(ans, splitter):
             ready += [i]
     return re.sub(r'[^a-zA-Z, ]', '', ','.join(ready).replace('\n', '')).lower()
 
-def generate_prompt(category: str):
+def generate_prompt(category: str, num_tags: int = 3):
     global MEETING
     CATEGORY = category
     MEETING += 'Your topic:\n' + CATEGORY + ':'
     
-    data = {"model": "llama3", "prompt": MEETING, "options": {"temperature": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
+    data = {"model": MODEL, "prompt": MEETING, "options": {"TEMPERATURE": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
     
-    response : requests.Response = requests.post('http://localhost:11434/api/generate', headers = headers, data = json.dumps(data))
+    response : requests.Response = requests.post(LLAMA_SERVER, headers = headers, data = json.dumps(data))
     if response.status_code != 200:
         print('ERROR')
     else:
@@ -100,10 +106,10 @@ def generate_prompt(category: str):
                     ready_tags += [i]
             
             ready_tags = list(set(ready_tags))
-            if len(ready_tags) > 4:
+            if len(ready_tags) > num_tags:
                 ready_tags = np.array(ready_tags)
                 np.random.shuffle(ready_tags)
-                return ','.join(ready_tags[:4].tolist())
+                return ','.join(ready_tags[:num_tags].tolist())
             else:
                 return ','.join(ready_tags)
 
