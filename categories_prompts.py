@@ -1,14 +1,14 @@
-category_matching = {'Кредит': ['ПК', 'TOPUP', 'REFIN', 'AUTO_SCR', 'MORTG_SCR'],
-                     'Автокредит': ['AUTO'],
-                     'Счета_вклады': ['DEPOSIT', 'SAVE_ACC', 'TRUST', 'OMS', 'INVEST'],
-                     'Страхованиe': ['ISG', 'NSG', 'INS_LIFE', 'INS_PROPERTY'],
-                     'Ипотека': ['MORTG', 'MORTG_REFIN'],
-                     'Обмен валюты': ['CURR_EXC'],
-                     'Карта': ['CC', 'IZP', 'DC', 'PREMIUM']}
+category_matching = {'loan': ['ПК', 'TOPUP', 'REFIN', 'AUTO_SCR', 'MORTG_SCR'],
+                     'car loan': ['AUTO'],
+                     'accounts, deposits': ['DEPOSIT', 'SAVE_ACC', 'TRUST', 'OMS', 'INVEST'],
+                     'insurance': ['ISG', 'NSG', 'INS_LIFE', 'INS_PROPERTY'],
+                     'mortgage': ['MORTG', 'MORTG_REFIN'],
+                     'currency exchange': ['CURR_EXC'],
+                     'bank card': ['CC', 'IZP', 'DC', 'PREMIUM']}
 
 categories_prompts = {
     
-    'Обмен валюты': ['dollar,dollar bill,arrow,coin,rubble,exchange,currency exchange',
+    'currency exchange': ['dollar,dollar bill,arrow,coin,rubble,exchange,currency exchange',
                      'ATM machine,blue,dollar,coin,gold goin,exchange,currency exchange',
                      'dollar,euro,ruble,currency notes from different countries,exchange,currency exchange',
                      'rasing chart,upwise trend,orange line,exchange rate,banknote',
@@ -20,7 +20,7 @@ categories_prompts = {
                      'coin,banknote,exchange,currency exchange,profitable,chart,increasing trend,percentage sign,green line',
                      'different currencies, banknotes, calculator, dynamic exchange rate figures,currency exchange, exchange'],
     
-    'Кредит': ['stack,stack of coins,stack of bills,credit,profitably,loan,loan approval',
+    'loan': ['stack,stack of coins,stack of bills,credit,profitably,loan,loan approval',
                'handshake,contract,beneficial,bills,loan,loan approval',
                'green confirmation check mark,loan,loan approval,bundle of bills,banknotes',
                'contract,confirmation tick,handshake,loan,loan approval,bag of money',
@@ -32,7 +32,7 @@ categories_prompts = {
                'new year,gift box,red box,white ribbon bow,Santa claus hat,snow,snowdrifts',
                'new year,gift box,blue box,Christmas tree,snow,snowdrifts'],
     
-    'Карта': ['card,gazprombank logo,mobile phone,smartphone,black phone',
+    'bank card': ['card,gazprombank logo,mobile phone,smartphone,black phone',
               'card,gazprombank logo,white smartphone,open screen,blue screen',
               'credit card,gazprombank logo,gazpromcard,percent,percent sign,profitably,card',
               'credit card,gazprombank logo,gift box,blue box,Christmas tree,snow,snowdrifts',
@@ -44,7 +44,7 @@ categories_prompts = {
               'card,payment,terminal,ATM machine,black,while,silver',
               'card,payment,terminal,contactless payment,online payment,attach the card to the terminal'],
     
-    'Счета_вклады': ['safe,safety,safe locker,gold,gold coins',
+    'accounts, deposits': ['safe,safety,safe locker,gold,gold coins',
                      'safe,safety,safe locker,silver,silver coins',
                      'safe,safety,safe locker,pack of banknotes,blue,money,bills',
                      'bank,money,bank building,coin,banknote,blue,white,light blue,orange',
@@ -55,7 +55,7 @@ categories_prompts = {
                      'blue shield,banknotes,money',
                      'silver shield,banknotes,money'],
     
-    'Ипотека': ['house,river,tree,windows,stairs,blue sky,white house',
+    'mortgage': ['house,river,tree,windows,stairs,blue sky,white house',
                 'sun,white house,without doors,without windows,lightnings,confetti',
                 'grey house key,gift,red ribbow bow',
                 'grey house key,gift,red ribbow bow,confetti',
@@ -65,7 +65,7 @@ categories_prompts = {
                 'house,roof,ribbon bow,gift',
                 'orange house,blue roof,white ribbon bow'],
     
-    'Автокредит': ['blue car,percent sign,red ribbon bow',
+    'car loan': ['blue car,percent sign,red ribbon bow',
                    'two cars,confetti,gift,red,blue,silver',
                    'two cars,confetti,gift,orange,blue,gold',
                    'three cars,three,percent sign,percent,orange,black,white,blue,light blue',
@@ -76,7 +76,7 @@ categories_prompts = {
                    'black steering wheel,blue percent sign,profitably',
                    'car,percent sign'],
     
-    'Страхованиe': ['two shields,shield,blue shield,orange shield',
+    'insurance': ['two shields,shield,blue shield,orange shield',
                     'safe,safety,two hands,promise, care, hand,hands in the begging pose',
                     'protection, protective sign,shield,blue',
                     'shiled,silver shield,car,protection',
