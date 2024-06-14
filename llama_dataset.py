@@ -4,6 +4,10 @@ import re
 import random
 import numpy as np
 
+LLAMA_SERVER = 'http://localhost:11434/api/generate'
+TEMPERATURE = 1.2    # отвечает за вариативность и длину генерации
+MODEL = 'llama3'
+
 def generate_prompt_dataset(data):
 
     headers = {
@@ -60,9 +64,9 @@ def generate_prompt_dataset(data):
     
     MEETING += 'your info: ' + INFO_USER + '\nprompt:'
     
-    data = {"model": "llama3", "prompt": MEETING, "options": {"temperature": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
+    data = {"model": MODEL, "prompt": MEETING, "options": {"temperature": TEMPERATURE, "num_predict": -1, "top_k": 80, "mirostat": 2}}
     
-    response : requests.Response = requests.post('http://localhost:11434/api/generate', headers = headers, data = json.dumps(data))
+    response : requests.Response = requests.post(LLAMA_SERVER, headers = headers, data = json.dumps(data))
     if response.status_code != 200:
         print('ERROR')
     else:
