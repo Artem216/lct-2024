@@ -13,49 +13,106 @@
 #   },
 # ])
 
+%%time
+
 import requests
 import json
 import re
+import hashlib
+import sys
+import datetime
+import random
+import numpy as np
+
+salt = 'lct_gazprombank_june_2024_picture_generation'
+
+def exp3_hash(arg, salt):
+    sha1 = hashlib.sha1()
+    sha1.update(salt)
+    sha1.update(arg)
+    res = sha1.hexdigest()[:16]
+    return int(res, 16) % 100
 
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
 }
 
 some_objects = {
-    'nature': ['blue lake,water,yellow sun,sun,sand,tree'],
-    'food': ['plate,round plate,red apple,green apple,banana'],
-    # 'study': ['grey laptop,book,pencil,red book,hands,typing'],
-    # 'animals': ['two cats,orange cat,gray cat,tails,stripes,sitting,cat']
+    'nature': ['blue lake,water,yellow sun,sun,sand,green tree'],
+    'food': ['plate,round plate,red apple,green apple,banana']
 }
 
-CATEGORY = 'card'
+necessary_objects = {'currency exchange': ',coin',
+                    'car loan': ',car',
+                    'mortgage': ',house',
+                    'bank card': ',card,gazprombank logo',
+                    'accounts, deposits': ',coin',
+                    'loan': ',coin',
+                    'insurance': ',shield'}
+
 other_tags = list(some_objects.keys())
-MEETING = 'Write associations with each topic. Associations should be physical objects and easy to draw it. For example:\n\n'
+MEETING = 'Write associations with each topic. Associations should be physical objects and easy to draw it. It is necessary to add colors to objects.\
+     Do not write anything except for sequence of words!. For example:\n\n'
 for tag in other_tags:
     MEETING += tag + ': ' + '\n'.join(some_objects[tag][:2]) + '\n\n'
-MEETING += 'Your topic:\n' + CATEGORY + ':'
-print(MEETING)
-
-data = {"model": "llama3", "prompt": MEETING, "options": {"temperature": 0.7, "num_predict": -1, "top_k": 80, "mirostat": 2}}
 
 def process(ans, splitter):
     ready = []
     for i in ans.split(splitter):
-        if len(i) > 30:
+        if len(i) > 20:
             continue
         else:
             ready += [i]
     return re.sub(r'[^a-zA-Z, ]', '', ','.join(ready).replace('\n', '')).lower()
 
-response : requests.Response = requests.post('http://localhost:11434/api/generate', headers = headers, data = json.dumps(data))
-if response.status_code != 200:
-    print('ERROR')
-else:
-    ans = ''
-    for obj in response.content.decode('utf-8').split('\n')[:-1]:
-        ans += (json.loads(obj)['response'])
+def generate_prompt(category: str):
+    global MEETING
+    CATEGORY = category
+    MEETING += 'Your topic:\n' + CATEGORY + ':'
+    
+    data = {"model": "llama3", "prompt": MEETING, "options": {"temperature": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
+    
+    response : requests.Response = requests.post('http://localhost:11434/api/generate', headers = headers, data = json.dumps(data))
+    if response.status_code != 200:
+        print('ERROR')
+    else:
+        ans = ''
+        for obj in response.content.decode('utf-8').split('\n')[:-1]:
+            ans += (json.loads(obj)['response'])
+        
+        ans = ans.lower().split(CATEGORY)[-1]
 
-    ans += ',' + ','.join(CATEGORY.split(' '))
-    version1, version2 = process(ans, ','), process(ans, '*')
-    print()
-    print(version2) if version1 == '' else print(version1)
+        version1, version2 = process(ans, ','), process(ans, '*')
+        version1 += ',' + ','.join(CATEGORY.split(' '))
+        version2 += ',' + ','.join(CATEGORY.split(' '))
+
+        def choose_tags(text):
+            tags = text.split(',')
+            ready_tags = []
+            for i in tags:
+                if len(i) == 0 or i.count(' ') == len(i):
+                    continue
+                else:
+                    while not(i[0].isalpha()):
+                        i = i[1:]
+                    while not(i[-1].isalpha()):
+                        i = i[:-1]
+                    ready_tags += [i]
+            
+            ready_tags = list(set(ready_tags))
+            if len(ready_tags) > 4:
+                ready_tags = np.array(ready_tags)
+                np.random.shuffle(ready_tags)
+                return ','.join(ready_tags[:4].tolist())
+            else:
+                return ','.join(ready_tags)
+
+        if len(version1) > len(version2):
+            version = choose_tags(version1)
+        else:
+            version = choose_tags(version2)
+        
+        if exp3_hash(str(version).encode('utf-8'), str(salt).encode('utf-8')) < 50 and necessary_objects[CATEGORY][1:] not in version:
+            version += necessary_objects[CATEGORY]
+        
+        return version
