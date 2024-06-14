@@ -3,14 +3,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import storage from "@/lib/storage";
 
-export const INITIAL_USER: IUser = {
-    id: '',
-    name: '',
-    username: '',
-    email: '',
-    imageUrl: '',
-    bio: '',
-}
 
 const INITIAL_STATE = {
     isLoading: false,

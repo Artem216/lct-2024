@@ -31,11 +31,17 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         let intervalId: number | NodeJS.Timeout;
-
+    
         async function fetchImageStatus(ids: number[]) {
             try {
                 const response = await ApiImage.getSeveralImagesByIds(ids);
                 setGeneratedImages(response);
+    
+                // Check if all images have status 'complete'
+                const allComplete = response.every(image => image.status === 'complete');
+                if (allComplete) {
+                    clearInterval(intervalId as number);
+                }
             } catch (error) {
                 toast({
                     title: "Ошибка генерации. Попробуйте снова",
@@ -43,20 +49,21 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
                 });
             }
         }
-
+    
         if (isStartGeneration && generatedImages.length > 0) {
             const imageIds: number[] = generatedImages.map(image => image.id);
             intervalId = setInterval(() => {
                 fetchImageStatus(imageIds);
             }, 2000);
         }
-
+    
         return () => {
             if (intervalId) {
                 clearInterval(intervalId as number);
             }
         };
-    }, [isStartGeneration]);
+    }, [isStartGeneration, generatedImages]);
+    
 
 
 

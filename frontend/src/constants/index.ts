@@ -72,6 +72,14 @@ export const topbarLinks = [
     },
 ];
 
+export const topbarAdminLinks = [
+    {
+        imgURL: "/assets/icons/home.svg",
+        route: "/admin-panel",
+        label: "Администрирование",
+    },
+];
+
 export const imageByCategory = [
     {
         imgURL: "/assets/money_house.png",
@@ -162,3 +170,5 @@ export const imageTypeValues: IConstant[] = [
     {'ghost' : 'Ghost'},
     {'nbo' : 'NBO'},
 ]
+
+export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0"]

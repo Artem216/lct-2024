@@ -14,13 +14,14 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { Input } from "../ui/input"
 import GeneratorSelect from "../shared/GeneratorSelect"
-import { ChannelSelectValues, ProductSelectValues, imageTypeValues } from "@/constants"
+import { ChannelSelectValues, ProductSelectValues, imageTypeValues, bgGenerationColors } from "@/constants"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react"
 import { Textarea } from "../ui/textarea"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import ApiImage from "@/services/apiImage"
 import { useGeneratorImages } from "@/context/GeneratorImagesContext"
+import { getRandomString, validatePromptForTags } from "@/lib/utils"
 
 type CheckedState = boolean | 'indeterminate';
 
@@ -31,6 +32,7 @@ const SideBarGenerator = () => {
     const [lengthSymbols, setLengthSymbols] = useState(0);
     const [checkPrompt, setCheckPrompt] = useState<CheckedState>(false);
     const [checkColor, setCheckColor] = useState<CheckedState>(false);
+    const [checkLLM, setCheckLLM] = useState<CheckedState>(false);
 
     const { setIsStartGeneration, setImgHeight, setImgWidth,
         setImgNumber, setGeneratedImages
@@ -47,7 +49,10 @@ const SideBarGenerator = () => {
                 required_error: "Пожалуйста выберите канал или заполните по умолчанию",
             }),
         prompt: z
-            .string(),
+            .string()
+            .refine(validatePromptForTags, {
+                message: "Промпт должен состоять их тегов разделенных через запятую, смотрите на пример",
+            }),
         imageType: z
             .string({
                 required_error: "Пожалуйста выберите тип изображения",
@@ -78,7 +83,7 @@ const SideBarGenerator = () => {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            color: "#FFC1A4", //задать рандом сюда
+            color: getRandomString(bgGenerationColors),
             width: 512,
             height: 512,
             imageNumber: 1,
@@ -88,7 +93,6 @@ const SideBarGenerator = () => {
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log("here")
         try {
             const response = await ApiImage.generate({
                 n_variants: data.imageNumber,
@@ -166,7 +170,7 @@ const SideBarGenerator = () => {
                             className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                            Использовать промпт
+                            Задать промпт
                         </label>
                     </div>
                     {checkPrompt &&
@@ -196,6 +200,19 @@ const SideBarGenerator = () => {
                                 )}
                             />
                         </div>}
+                    <div className="flex items-center space-x-2 ml-5 my-5">
+                        <Checkbox
+                            checked={checkLLM}
+                            onCheckedChange={(value) => { setCheckLLM(value) }}
+                        />
+                        <label
+                            htmlFor="terms"
+                            className="text-sm text-black
+                            font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Сгенерировать промпт с помощью LLM
+                        </label>
+                    </div>
                     <div className="flex justify-between items-center">
                         <FormField
                             control={form.control}
@@ -277,68 +294,72 @@ const SideBarGenerator = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 ml-5 my-5">
-                        <Checkbox
-                            checked={checkColor}
-                            onCheckedChange={(value) => { setCheckColor(value) }}
-                        />
-                        <label
-                            className="text-sm text-black
+                    <div>
+                        <div>
+                            <div className="flex items-center space-x-2 ml-5 my-5">
+                                <Checkbox
+                                    checked={checkColor}
+                                    onCheckedChange={(value) => { setCheckColor(value) }}
+                                />
+                                <label
+                                    className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            Задать цвет фона
-                        </label>
-                    </div>
-                    {checkColor &&
-                        <FormField
-                            control={form.control}
-                            name="color"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                className="ml-5"
-                                                type="color"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                style={{ cursor: 'pointer', width: '60px', height: '40px' }}
-                                            />
-                                            <label
-                                                className="text-sm text-black
+                                >
+                                    Задать цвет фона
+                                </label>
+                            </div>
+                            {checkColor &&
+                                <FormField
+                                    control={form.control}
+                                    name="color"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        className="ml-5"
+                                                        type="color"
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                        style={{ cursor: 'pointer', width: '60px', height: '40px' }}
+                                                    />
+                                                    <label
+                                                        className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                            >
-                                                Цвет фона
-                                            </label>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage className="shad-form_message" />
-                                </FormItem>
-                            )}
-                        />
-                    }
+                                                    >
+                                                        Цвет фона
+                                                    </label>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage className="shad-form_message" />
+                                        </FormItem>
+                                    )}
+                                />
+                            }
+                        </div>
 
-                    <div className="mt-3 ml-5">
-                        <label
-                            className="text-sm text-black
+                        <div className="mt-3 ml-5">
+                            <label
+                                className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            Количество картинок
-                        </label>
-                        <div className="flex items-center w-[100px]">
-                            <FormField
-                                control={form.control}
-                                name="imageNumber"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <Input className="shad-input text-black mt-3"
-                                                {...field} />
-                                        </FormControl>
-                                        <FormMessage className="shad-form_message" />
-                                    </FormItem>
-                                )}
-                            />
+                            >
+                                Количество картинок
+                            </label>
+                            <div className="flex items-center w-[100px]">
+                                <FormField
+                                    control={form.control}
+                                    name="imageNumber"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input className="shad-input text-black mt-3"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage className="shad-form_message" />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
                     </div>
 
