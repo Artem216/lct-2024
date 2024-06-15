@@ -18,24 +18,25 @@ interface IGenerate {
     colour: string;
 }
 
-export interface IResponseCardFull {
-    user_id: number;
-    req_id: number;
-    child_s3_url: string;
-    parent_s3_url: string;
-    x: number;
-    y: number;
-    rating: number;
-    prompt: string;
-    width: number;
-    height: number;
-    goal: string;
-    tags: [
-        {
-            "tag": string;
-        }
-    ];
-}
+// // userImage
+// export interface IResponseCardFull { // w, h ch, color
+//     user_id: number;
+//     req_id: number; //id картинки
+//     child_s3_url: string;
+//     parent_s3_url: string;
+//     x: number;
+//     y: number;
+//     rating: number;
+//     prompt: string;
+//     width: number;
+//     height: number;
+//     goal: string;
+//     tags: [
+//         {
+//             "tag": string;
+//         }
+//     ]; 
+// }
 
 export interface IResponseCard {
     id: number;
@@ -46,17 +47,27 @@ export interface IResponseCard {
     rating: number;
 }
 
+//user generated img, user card
 export interface IResponseImage {
-    id: number;
-    status: string;
+    user_id: number;
+    req_id: number; //id картинки
     child_s3_url: string;
     parent_s3_url: string;
     x: number;
     y: number;
-    child_w: number;
-    child_h: number; 
     colour: string;
+    child_w: number;
+    child_h: number;
     rating: number;
+    prompt: string;
+    width: number;
+    height: number;
+    goal: string;
+    tags: [
+        {
+            "tag": string;
+        }
+    ]; 
 }
 
 export interface IRating {
@@ -112,7 +123,7 @@ const ApiImage = {
         }
 
 
-        const response = await axios.get<IResponseCardFull[]>(`${BASE_URL}/api/v1/all_cards`, config);
+        const response = await axios.get<IResponseImage[]>(`${BASE_URL}/api/v1/all_cards`, config);
         return response.data;
     },
     async getTopCards(topN: number) {

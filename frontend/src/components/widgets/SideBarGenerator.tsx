@@ -258,7 +258,7 @@ const SideBarGenerator = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
-                                                    <Input className="shad-input text-black mt-3"
+                                                    <Input className="shad-input text-black mt-3" type="number"
                                                         {...field} />
                                                 </FormControl>
                                                 <FormMessage className="shad-form_message" />
@@ -282,7 +282,7 @@ const SideBarGenerator = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
-                                                    <Input className="shad-input text-black mt-3"
+                                                    <Input className="shad-input text-black mt-3" type="number"
                                                         {...field} />
                                                 </FormControl>
                                                 <FormMessage className="shad-form_message" />

@@ -21,7 +21,7 @@ const App = () => {
         <Route element={<RootLayout />}>
           <Route index element={<Home />} />
           <Route path='/generator' element={<Generator />} />
-          <Route path='/editor' element={<Editor />} />
+          <Route path='/editor/:imageType/:imageId' element={<Editor />} />
           <Route path='/admin-panel' element={<AdminPanel />} />
           <Route path='/top-images' element={<AllTopImages />} />
           <Route path='/my-images' element={<MyImages />} />

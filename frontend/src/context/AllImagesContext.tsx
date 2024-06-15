@@ -1,14 +1,14 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import ApiImage from '@/services/apiImage';
-import { IResponseCard, IResponseCardFull } from '@/services/apiImage';
+import { IResponseCard, IResponseImage } from '@/services/apiImage';
 
 interface AllImagesContextProps {
     topNCards: IResponseCard[];
     setTopNCards: React.Dispatch<React.SetStateAction<IResponseCard[]>>;
     topAllCards: IResponseCard[];
     setTopAllCards: React.Dispatch<React.SetStateAction<IResponseCard[]>>;
-    myCards: IResponseCardFull[];
-    setMyCards: React.Dispatch<React.SetStateAction<IResponseCardFull[]>>;
+    myCards: IResponseImage[];
+    setMyCards: React.Dispatch<React.SetStateAction<IResponseImage[]>>;
 }
 
 const AllImagesContext = createContext<AllImagesContextProps | undefined>(undefined);
@@ -16,7 +16,7 @@ const AllImagesContext = createContext<AllImagesContextProps | undefined>(undefi
 const AllImagesProvider = ({ children }: { children: ReactNode }) => {
     const [topNCards, setTopNCards] = useState<IResponseCard[]>([]);
     const [topAllCards, setTopAllCards] = useState<IResponseCard[]>([]);
-    const [myCards, setMyCards] = useState<IResponseCardFull[]>([]);
+    const [myCards, setMyCards] = useState<IResponseImage[]>([]);
 
     useEffect(() => {
         async function fetchTopNCards(topN: number) {
