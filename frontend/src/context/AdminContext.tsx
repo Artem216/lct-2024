@@ -8,6 +8,8 @@ interface AdminContextProps {
     setUsers: React.Dispatch<React.SetStateAction<IUser[]>>;
     userStatistics: IUserStatistics;
     setUserStatistics: React.Dispatch<React.SetStateAction<IUserStatistics>>;
+    generatedStatistics: IUserStatistics;
+    setGeneratedStatistics: React.Dispatch<React.SetStateAction<IUserStatistics>>;
 }
 
 const AdminContext = createContext<AdminContextProps | undefined>(undefined);
@@ -15,6 +17,7 @@ const AdminContext = createContext<AdminContextProps | undefined>(undefined);
 const AdminProvider = ({ children }: { children: ReactNode }) => {
     const [users, setUsers] = useState<IUser[]>([]);
     const [userStatistics, setUserStatistics] = useState<IUserStatistics>({ x: [], y: [] });
+    const [generatedStatistics, setGeneratedStatistics] = useState<IUserStatistics>({ x: [], y: [] });
 
     const { toast } = useToast();
 
@@ -45,12 +48,28 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
             }
         }
 
+        async function fetchGenStatistics() {
+            try {
+                const response = await ApiUser.getUserCardsStatistics();
+                setGeneratedStatistics(response);
+                console.log(response);
+            } catch (error) {
+                toast({
+                    title: "Ошибка получения статистики пользователей. Попробуйте снова",
+                    variant: "destructive",
+                });
+            }
+        }
+
         fetchUsers();
         fetchUserStatistics();
+        fetchGenStatistics();
     }, []);
 
     return (
-        <AdminContext.Provider value={{ users, setUsers, userStatistics, setUserStatistics }}>
+        <AdminContext.Provider value={{ users, setUsers, userStatistics, setUserStatistics,
+            generatedStatistics, setGeneratedStatistics
+         }}>
             {children}
         </AdminContext.Provider>
     );
