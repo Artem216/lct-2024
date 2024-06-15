@@ -3,6 +3,9 @@ import { Button } from "../ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import ImageChooseButtonDialog from './ImageChooseButtonDialog';
 import { useLocation, useNavigate } from 'react-router-dom';
+import IconButton from './IconButton';
+import ApiImage, { IRating } from '@/services/apiImage';
+import like_path from "../../assets/like.png"
 
 interface ImageCardProps {
   imgId: number;
@@ -43,9 +46,19 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId }: ImageCardProps) => {
     }
   };
 
+  async function handleRating(rating: IRating) {
+    const reponse = await ApiImage.changeRating(rating)
+    if (reponse) {
+      toast({
+        title: "Вы успешно разметили",
+        variant: "default",
+      })
+    }
+  }
+
   function goToConstructor() {
     let imageType = "top";
-    if(pathname === "/" || pathname === "/top-images") {
+    if (pathname === "/" || pathname === "/top-images") {
       imageType = "top"
     }
     else {
@@ -80,9 +93,20 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId }: ImageCardProps) => {
           )}
         </div>
         <div className="flex justify-between mx-10">
-          <p className="small-semibold p-3 text-dark-1 text-left mb-3">
-            Рейтинг: {rating}
-          </p>
+          <div className='flex gap-2'>
+            <p className="small-semibold p-3 text-dark-1 text-left mb-3">
+              Рейтинг: {rating}
+            </p>
+            <IconButton
+              iconSrc={like_path}
+              borderColor='#FC800F'
+              altText="Edit"
+              onClick={() => handleRating({
+                imageId: imgId,
+                changeType: "add"
+              })}
+            />
+          </div>
           <Button variant="default" className="shad-button_secondary px-5"
             onClick={() => { setOpenDialog(true) }}
           >

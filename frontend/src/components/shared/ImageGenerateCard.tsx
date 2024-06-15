@@ -7,6 +7,8 @@ import tick_path from '../../assets/tick.png';
 import repeat_path from '../../assets/repeat.png';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { useNavigate } from 'react-router-dom';
+import ApiImage from '@/services/apiImage';
+import { IRating } from '@/services/apiImage';
 
 interface ImageCardProps {
     imgSrc: string;
@@ -16,7 +18,7 @@ interface ImageCardProps {
     imgId: number;
 }
 
-const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageCardProps) => {
+const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: ImageCardProps) => {
     const { toast } = useToast();
     const navigate = useNavigate();
 
@@ -24,7 +26,18 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageC
         let imageType = "my";
         console.log('imgId', imgId)
         navigate(`/editor/${imageType}/${imgId}`);
-      }
+    }
+
+
+    async function handleRating(rating: IRating){
+        const reponse = await ApiImage.changeRating(rating)
+        if (reponse) {
+            toast({
+                title: "Вы успешно разметили",
+                variant: "default",
+            })
+        }
+    }
 
     return (
         <div className="flex flex-col justify-between h-[500px] max-w-[500px] border-[2px] border-solid border-secondary-500 rounded-[25px] mx-auto p-3">
@@ -32,7 +45,7 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageC
                 {status === "complete" ? (
                     <img src={imgSrc} alt="generated image" className="object-contain w-full h-full" />
                 ) : (
-                    <LoadingSkeleton width={imgWidth} height={imgHeight}/>
+                    <LoadingSkeleton width={imgWidth} height={imgHeight} />
                 )}
             </div>
             <div className="flex justify-between items-center mt-3 mx-3">
@@ -41,13 +54,19 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageC
                         iconSrc={cross_path}
                         borderColor='#A94545'
                         altText="Edit"
-                        onClick={() => alert('Edit button clicked')}
+                        onClick={() => handleRating({
+                            imageId: imgId,
+                            changeType: "delete"
+                        })}
                     />
                     <IconButton
                         iconSrc={tick_path}
                         borderColor='#A4E5A2'
                         altText="Edit"
-                        onClick={() => alert('Edit button clicked')}
+                        onClick={() => handleRating({
+                            imageId: imgId,
+                            changeType: "add"
+                        })}
                     />
                     <IconButton
                         iconSrc={repeat_path}
@@ -57,7 +76,7 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageC
                     />
                 </div>
                 <Button variant="default" className="shad-button_secondary px-5"
-                onClick={goToConstructor}>
+                    onClick={goToConstructor}>
                     Редактировать
                 </Button>
             </div>
