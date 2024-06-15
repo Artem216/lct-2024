@@ -51,7 +51,7 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
         }
     
         if (isStartGeneration && generatedImages.length > 0) {
-            const imageIds: number[] = generatedImages.map(image => image.id);
+            const imageIds: number[] = generatedImages.map(image => image.req_id);
             intervalId = setInterval(() => {
                 fetchImageStatus(imageIds);
             }, 2000);

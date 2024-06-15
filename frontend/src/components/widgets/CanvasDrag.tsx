@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useAllImages } from '@/context/AllImagesContext';
 import CanvasSideBar from './CanvasSideBar';
 import { useImageConstructor } from '@/context/imageConstructorContext';
+import ApiImage from '@/services/apiImage';
 
 interface DraggableImageProps {
     x: number;
@@ -182,7 +183,7 @@ interface TextElement {
 const CanvasDrag: React.FC = () => {
     const stageRef = useRef<Konva.Stage>(null);
     const { imageId, imageType } = useParams();
-    const { myCards } = useAllImages();
+    const { myCards, topAllCards } = useAllImages();
     const { color, setColor, setHeight, height, setWidth, width, fontSize,
         colorText, undo, setUndo
     } = useImageConstructor();
@@ -227,6 +228,32 @@ const CanvasDrag: React.FC = () => {
     }, [undo])
 
     useEffect(() => {
+        async function fetchImageStatus(id: number) {
+            try {
+                const imageCard = await ApiImage.getImageById(id);
+
+                const position: IPosition = {
+                    x: imageCard.x,
+                    y: imageCard.y,
+                    isDragging: false,
+                    imgSrc: imageCard.child_s3_url,
+                    width: imageCard.child_w,
+                    height: imageCard.child_h,
+                    color: imageCard.colour,
+                };
+                setWidth(imageCard.width);
+                setHeight(imageCard.height);
+                setInitialWidth(imageCard.width);
+                setInitialHeight(imageCard.height);
+                setLion(position);
+                setInitialLion(position);
+                setIsLoading(false);
+                setColor(imageCard.colour);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
         if (imageType === "my") {
             const imageCard = myCards.find(card => card.req_id === Number(imageId));
             if (imageCard) {
@@ -247,6 +274,12 @@ const CanvasDrag: React.FC = () => {
                 setInitialLion(position);
                 setIsLoading(false);
                 setColor(imageCard.colour);
+            }
+        }
+        else {
+            const imageCard = topAllCards.find(card => card.id === Number(imageId));
+            if (imageCard) {
+                fetchImageStatus(imageCard.id)
             }
         }
     }, [imageId, imageType, myCards]);
