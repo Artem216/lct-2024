@@ -73,7 +73,7 @@ def process(ans, splitter):
 
 def generate_prompt(category: str, num_tags: int = 3):
     global MEETING
-    CATEGORY = category
+    CATEGORY = ' '.join(category.split('_'))
     MEETING += 'Your topic:\n' + CATEGORY + ':'
     
     data = {"model": MODEL, "prompt": MEETING, "options": {"TEMPERATURE": 1.2, "num_predict": -1, "top_k": 80, "mirostat": 2}}
