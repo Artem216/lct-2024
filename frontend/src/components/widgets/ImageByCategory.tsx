@@ -10,9 +10,9 @@ const ImageByCategory = () => {
                 <p className="base-regular md:base-regular text-center text-dark-1 m-2 w-[70%] mx-auto mb-5">Используй сгенерированные другими пользователями изображения в готовом виде или как отправную точку для новых изображений</p>
                 <div className="flex justify-around mx-20 flex-wrap gap-10">
                     {imageByCategory.map((link) => {
-
+                        const routejoin = `/all-cat-images/${link.category}`
                         return (
-                            <Link to={link.route}
+                            <Link to={routejoin}
                                 key={link.title}
                                 className={`flex-center flex-col gap-1 p-2 transition`}>
                                 <ImageTile color={link.color} title={link.title} imgSrc={`src${link.imgURL}`}/>

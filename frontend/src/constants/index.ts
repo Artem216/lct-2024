@@ -80,48 +80,70 @@ export const topbarAdminLinks = [
     },
 ];
 
+export const categoryToTitle: IConstant = {
+    mortgage: "Ипотека",
+    autocredit: "Автокредиты",
+    credit: "Кредиты",
+    accounts_deposits: "Вклады",
+    card: "Банковские карты",
+    insurance: "Страхование",
+    currency_exchange: "Обмен валют"
+};
+
 export const imageByCategory = [
     {
         imgURL: "/assets/money_house.png",
         color: "#FFC1A4",
         route: "/my-images",
         title: "Ипотека",
+        category: "mortgage",
     },
     {
         imgURL: "/assets/car_percent.png",
         color: "#476BF0",
         route: "/my-images",
         title: "Автокредиты",
+        category: "autocredit",
     },
     {
         imgURL: "/assets/card_ok.png",
         color: "#FFC1A4",
         route: "/my-images",
         title: "Кредиты",
+        category: "credit",
+
     },
     {
         imgURL: "/assets/shield.png",
         color: "#476BF0",
         route: "/my-images",
         title: "Вклады",
+        category: "accounts_deposits",
+
     },
     {
-        imgURL: "/assets/money_house.png",
+        imgURL: "/assets/card_present.png",
         color: "#FFC1A4",
         route: "/my-images",
-        title: "Ипотека",
+        title: "Банковские карты",
+        category: "card",
+
     },
     {
-        imgURL: "/assets/card_ok.png",
-        color: "#FFC1A4",
-        route: "/my-images",
-        title: "Кредиты",
-    },
-    {
-        imgURL: "/assets/shield.png",
+        imgURL: "/assets/shield_car.png",
         color: "#476BF0",
         route: "/my-images",
-        title: "Вклады",
+        title: "Страхование",
+        category: "insurance",
+
+    },
+    {
+        imgURL: "/assets/bag_coins.png",
+        color: "#FFC1A4",
+        route: "/my-images",
+        title: "Обмен валют",
+        category: "currency_exchange",
+
     },
 ];
 
@@ -166,9 +188,35 @@ export const ProductSelectValues: IConstant[] = [
 ]
 
 export const imageTypeValues: IConstant[] = [
-    {'megabanner' : 'Megabanner'},
-    {'ghost' : 'Ghost'},
-    {'nbo' : 'NBO'},
+    { 'megabanner': 'Megabanner' },
+    { 'ghost': 'Ghost' },
+    { 'nbo': 'NBO' },
 ]
 
 export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0"]
+
+
+export const productCategoryMap = {
+    "ПК": "credit",
+    "TOPUP": "credit",
+    "REFIN": "credit",
+    "CC": "credit",
+    "AUTO_SCR": "credit",
+    "MORTG_SCR": "credit",
+    "AUTO": "autocredit",
+    "MORTG": "mortgage",
+    "MORTG_REFI": "mortgage",
+    "DEPOSIT": "accounts_deposits",
+    "SAVE_ACC": "accounts_deposits",
+    "INVEST": "accounts_deposits",
+    "TRUST": "accounts_deposits",
+    "OMS": "accounts_deposits",
+    "IZP": "card",
+    "DC": "card",
+    "PREMIUM": "card",
+    "ISG": "insurance",
+    "NSG": "insurance",
+    "INS_LIFE": "insurance",
+    "INS_PROPERTY": "insurance",
+    "CURR_EXC": "currency_exchange"
+}

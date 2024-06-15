@@ -122,8 +122,19 @@ const ApiImage = {
             }
         }
 
-
         const response = await axios.get<IResponseImage[]>(`${BASE_URL}/api/v1/all_cards`, config);
+        return response.data;
+    },
+    async getCardsByCategory(category: string) {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${storage.getToken()}`
+            }
+        }
+
+        console.log(`${BASE_URL}/api/v1/cards/${category}`)
+        const response = await axios.get<IResponseCard[]>(`${BASE_URL}/api/v1/cards/${category}`, config);
+        console.log(response.data)
         return response.data;
     },
     async getTopCards(topN: number) {
