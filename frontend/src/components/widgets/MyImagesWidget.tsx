@@ -1,9 +1,13 @@
 import { useAllImages } from "@/context/AllImagesContext"
 import ImageCard from "../shared/ImageCard"
+import ImageCarousel from "./ImageCarousel";
+import { useState } from "react";
 
 
 const MyImagesWidget = () => {
   const { myCards } = useAllImages();
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <>
       <div className="w-[95%] mx-auto p-10 bg-light-1 rounded-2xl my-10">
@@ -12,16 +16,23 @@ const MyImagesWidget = () => {
         </div>
         <div className="flex justify-between mx-20 flex-wrap gap-10">
           {myCards.map((card) => {
-            console.log(card.req_id)
+
             return (
-              <ImageCard rating={card.rating}
-                imgPrompt={card.prompt}
-                imgSrc={card.child_s3_url} 
-                imgId={card.req_id}/>
+              <div
+                key={card.req_id}
+                className="cursor-pointer"
+                onClick={() => setOpenDialog(true)}
+              >
+                <ImageCard rating={card.rating}
+                  imgPrompt={card.prompt}
+                  imgSrc={card.child_s3_url}
+                  imgId={card.req_id} />
+              </div>
             )
           })}
         </div>
       </div>
+      <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={myCards} />
 
     </>
   )

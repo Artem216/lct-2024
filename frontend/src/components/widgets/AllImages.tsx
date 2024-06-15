@@ -2,10 +2,13 @@ import { useAllImages } from "@/context/AllImagesContext"
 import ImageCard from "../shared/ImageCard"
 import { Button } from "../ui/button"
 import { Link } from "react-router-dom";
+import ImageCarousel from "./ImageCarousel";
+import { useState } from "react";
 
 
 const AllImages = () => {
   const { topNCards } = useAllImages();
+  const [openDialog, setOpenDialog] = useState(false);
   return (
     <>
       <div className="w-[95%] mx-auto p-10 bg-light-1 rounded-2xl my-10">
@@ -20,14 +23,24 @@ const AllImages = () => {
         <div className="flex justify-between mx-20 flex-wrap gap-5">
           {topNCards.map((card) => {
             return (
-              <ImageCard rating={card.rating}
-                imgPrompt={card.prompt}
-                imgSrc={card.child_s3_url} 
-                imgId={card.id}/>
-            )
+              <div
+                key={card.id}
+                className="cursor-pointer"
+                onClick={() => setOpenDialog(true)} 
+              >
+                <ImageCard
+                  rating={card.rating}
+                  imgPrompt={card.prompt}
+                  imgSrc={card.child_s3_url}
+                  imgId={card.id}
+                />
+              </div>
+            );
           })}
         </div>
+
       </div>
+      <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={topNCards} />
 
     </>
   )
