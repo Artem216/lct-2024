@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAdmin } from "@/context/AdminContext"
 import ConfirmDialog from './ConfirmDialog';
+import ApiUser from '@/services/apiUser';
+import { useToast } from '../ui/use-toast';
 
 function MoveHorizontalIcon(props: any) {
     return (
@@ -31,19 +33,47 @@ const UserTable = () => {
     const { users } = useAdmin();
     const [selectedUser, setSelectedUser] = useState(null);
     const [dialogType, setDialogType] = useState('');
+    const { toast } = useToast();
+
 
     const handleMenuClick = (user: any, type: string) => {
         setSelectedUser(user);
         setDialogType(type);
     };
 
-    const handleConfirm = () => {
+    async function promoteUser(userId: number) {
+        try {
+            const reponse = await ApiUser.raiseUserToAdmin(userId);
+            if (reponse) {
+                toast({
+                    title: "Пользователь повышен до администратора",
+                    variant: "default",
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function deleteUser(userId: number) {
+        try {
+            const reponse = await ApiUser.deleteUser(userId);
+            if (reponse) {
+                toast({
+                    title: "Пользователь удален, обновите страницу при необходимости",
+                    variant: "default",
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function handleConfirm() {
         if (dialogType === 'promote') {
-            console.log("Promote user:", selectedUser);
-            // Add your promote user logic here
+            if (selectedUser) await promoteUser(selectedUser)
         } else if (dialogType === 'delete') {
-            console.log("Delete user:", selectedUser);
-            // Add your delete user logic here
+            if (selectedUser) await deleteUser(selectedUser)
         }
         setSelectedUser(null);
         setDialogType('');
@@ -90,9 +120,11 @@ const UserTable = () => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="text-black bg-white">
-                                        <DropdownMenuItem onClick={() => handleMenuClick(user, 'promote')}>
-                                            <Button className="border-black border w-[95%]">Сделать администратором</Button>
-                                        </DropdownMenuItem>
+                                        {!user.is_admin &&
+                                            <DropdownMenuItem onClick={() => handleMenuClick(user, 'promote')}>
+                                                <Button className="border-black border w-[95%]">Сделать администратором</Button>
+                                            </DropdownMenuItem>
+                                        }
                                         <DropdownMenuItem onClick={() => handleMenuClick(user, 'delete')}>
                                             <Button className="bg-red w-[95%]">Удалить пользователя</Button>
                                         </DropdownMenuItem>

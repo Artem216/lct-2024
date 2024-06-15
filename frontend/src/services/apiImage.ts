@@ -8,7 +8,7 @@ interface IGenerate {
     width: number;
     height: number;
     goal: string;
-    tags: [
+    tags?: [
         {
             "tag": string;
         }
@@ -63,7 +63,8 @@ export interface IResponseImage {
     width: number;
     height: number;
     goal: string;
-    tags: [
+    status: string;
+    tags?: [
         {
             "tag": string;
         }
