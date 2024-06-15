@@ -6,17 +6,25 @@ import cross_path from '../../assets/cross.png';
 import tick_path from '../../assets/tick.png';
 import repeat_path from '../../assets/repeat.png';
 import { LoadingSkeleton } from './LoadingSkeleton';
+import { useNavigate } from 'react-router-dom';
 
 interface ImageCardProps {
     imgSrc: string;
     status: string;
     imgWidth: number;
     imgHeight: number;
+    imgId: number;
 }
 
-const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight }: ImageCardProps) => {
+const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId}: ImageCardProps) => {
     const { toast } = useToast();
-    console.log(imgHeight, imgWidth)
+    const navigate = useNavigate();
+
+    function goToConstructor() {
+        let imageType = "my";
+        console.log('imgId', imgId)
+        navigate(`/editor/${imageType}/${imgId}`);
+      }
 
     return (
         <div className="flex flex-col justify-between h-[500px] max-w-[500px] border-[2px] border-solid border-secondary-500 rounded-[25px] mx-auto p-3">
@@ -48,7 +56,8 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight }: ImageCardPro
                         onClick={() => alert('Edit button clicked')}
                     />
                 </div>
-                <Button variant="default" className="shad-button_secondary px-5">
+                <Button variant="default" className="shad-button_secondary px-5"
+                onClick={goToConstructor}>
                     Редактировать
                 </Button>
             </div>

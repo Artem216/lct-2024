@@ -16,11 +16,12 @@ const GeneratedImages = () => {
                             {generatedImages.map((image) => {
                                 return (
                                     <ImageGenerateCard
-                                        key={image.id}
+                                        key={image.req_id}
                                         status={image.status}
-                                        imgSrc={image.s3_url ? image.s3_url : ""}
+                                        imgSrc={image.child_s3_url ? image.child_s3_url : ""}
                                         imgHeight={imgHeight}
                                         imgWidth={imgWidth}
+                                        imgId={image.req_id}
                                     />
                                 )
                             })}
