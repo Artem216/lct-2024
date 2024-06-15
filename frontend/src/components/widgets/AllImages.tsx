@@ -22,7 +22,8 @@ const AllImages = () => {
             return (
               <ImageCard rating={card.rating}
                 imgPrompt={card.prompt}
-                imgSrc={card.child_s3_url} />
+                imgSrc={card.child_s3_url} 
+                imgId={card.id}/>
             )
           })}
         </div>

@@ -206,7 +206,9 @@ const CanvasDrag: React.FC = () => {
             const scaleHeight = containerHeight / height;
             const newScale = Math.min(scaleWidth, scaleHeight);
 
-            setScale(newScale);
+            if(newScale < 1) {
+                setScale(newScale);
+            }
         };
 
         window.addEventListener('resize', handleResize);
