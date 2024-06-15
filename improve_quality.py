@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageFilter
-from cv2 import dnn_superres
 
 def denoise_image(image):
     # Проверка формата изображения и приведение к нужному формату
@@ -17,16 +16,18 @@ def sharpen_image(image):
     sharpened_image = pil_image.filter(ImageFilter.SHARPEN)
     return cv2.cvtColor(np.array(sharpened_image), cv2.COLOR_RGB2BGR)
 
-# Загрузка модели FSRCNN
-sr = cv2.dnn_superres.DnnSuperResImpl_create()
-sr.readModel("FSRCNN_x4.pb")
-sr.setModel("fsrcnn", 4)
+def improve_quality(path_to_img):
 
-image = cv2.imread("input.png")
-denoised_image = denoise_image(image)
+    image = cv2.imread(path_to_img)
 
-upscaled_image = sr.upsample(denoised_image)
+    # Легковесная модель
+    sr = cv2.dnn_superres.DnnSuperResImpl_create()
+    sr.readModel("FSRCNN_x4.pb")
+    sr.setModel("fsrcnn", 4)
+    
+    denoised_image = denoise_image(image)
 
-sharpened_image = sharpen_image(upscaled_image)
+    upscaled_image = sr.upsample(denoised_image)  # Применение супер-разрешения
+    sharpened_image = sharpen_image(upscaled_image) # Увеличение резкости
 
-cv2.imwrite("output.png", sharpened_image)
+    cv2.imwrite("output_image.png", sharpened_image)
