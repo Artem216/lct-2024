@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from "../ui/button";
-import { useToast } from "@/components/ui/use-toast"; // Импортируем ваш механизм уведомлений
+import { useToast } from "@/components/ui/use-toast";
 
 interface ImageCardProps {
   imgSrc: string;
