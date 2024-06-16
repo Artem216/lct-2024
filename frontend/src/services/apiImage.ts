@@ -83,6 +83,11 @@ export interface IRating {
     changeType: "add" | "delete";
 }
 
+interface generateFromFile {
+    id_user_from_csv: number; 
+    cluster_name: string;
+}
+
 
 
 const ApiImage = {
@@ -117,6 +122,19 @@ const ApiImage = {
         })
         
         return responseImgs;
+    },
+    async generateFromFile(generateDataFile: IGenerate & generateFromFile, dataFile: File) {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${storage.getToken()}`
+            }
+        }
+    
+        const formData = new FormData();
+        formData.append('file', dataFile);
+        formData.append('data', JSON.stringify(generateDataFile)); 
+
+        return await axios.post(`${BASE_URL}/api/v1/videos`, formData, config);
     },
     async getImageById(imgId: number) {
         let config = {
