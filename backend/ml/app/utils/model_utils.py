@@ -26,12 +26,12 @@ from .lama_dataset import prompt_dataset_pipeline
 class Model:
     def __init__(self, weights, name_model='runwayml/stable-diffusion-v1-5'):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        logger.info(self.device)
         self.name_model = name_model
         self.load_model(weights)
     
     def load_model(self, weights):
-        self.pipe = StableDiffusionPipeline.from_pretrained(self.name_model).to(self.device)
-        # torch_dtype=torch.float16
+        self.pipe = StableDiffusionPipeline.from_pretrained(self.name_model, torch_dtype=torch.float16).to(self.device)
         self.pipe.safety_checker = None
         self.pipe.requires_safety_checker = False
         
@@ -75,7 +75,7 @@ class Model:
         negative_prompt='pig, wool, draw, noise, real, text, number, picture, texture, detail'
         with torch.no_grad():
             img = self.model(prompt_, 
-                             negative_prompt=negative_prompt, num_inference_steps=10).images[0]
+                             negative_prompt=negative_prompt).images[0]
         rm_img = self.remove_bg(img)
         return self.save_image_to_bytes(rm_img), prompt_new
 

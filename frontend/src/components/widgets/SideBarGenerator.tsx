@@ -63,24 +63,20 @@ const SideBarGenerator = () => {
                 required_error: "Пожалуйста выберите тип изображения",
             }),
         height: z
-            .number({
+            .string({
                 required_error: "Пожалуйста задайте высоту",
-                invalid_type_error: "Введите число"
             })
-            .min(20).max(2000),
+            ,
         width: z
-            .number({
+            .string({
                 required_error: "Пожалуйста задайте ширину",
-                invalid_type_error: "Введите число"
-            })
-            .min(20).max(2000),
+            }),
         color: z
             .string(),
         imageNumber: z
             .string({
                 required_error: "Пожалуйста задайте количество картинок",
             })
-            .min(1).max(10),
 
     })
 
@@ -88,8 +84,8 @@ const SideBarGenerator = () => {
         resolver: zodResolver(FormSchema),
         defaultValues: {
             color: getRandomString(bgGenerationColors),
-            width: 512,
-            height: 512,
+            width: '512',
+            height: '512',
             imageNumber: '1',
             prompt: "",
             imageType: "megabanner"
@@ -108,8 +104,8 @@ const SideBarGenerator = () => {
                 const response = await ApiImage.generateFromFile({
                     n_variants: Number(data.imageNumber),
                     prompt: data.prompt,
-                    width: data.width,
-                    height: data.height,
+                    width: Number(data.width),
+                    height: Number(data.height),
                     goal: data.channel,
                     product: data.product,
                     image_type: data.imageType,
@@ -120,8 +116,8 @@ const SideBarGenerator = () => {
                 }, file)
                 form.reset();
                 setIsStartGeneration(true);
-                setImgHeight(data.height);
-                setImgWidth(data.width);
+                setImgHeight(Number(data.height));
+                setImgWidth(Number(data.width));
                 setImgNumber(Number(data.imageNumber));
                 setGeneratedImages(response);
             }
@@ -140,8 +136,8 @@ const SideBarGenerator = () => {
                 const response = await ApiImage.generate({
                     n_variants: Number(data.imageNumber),
                     prompt: data.prompt,
-                    width: data.width,
-                    height: data.height,
+                    width: Number(data.width),
+                    height: Number(data.height),
                     goal: data.channel,
                     product: data.product,
                     image_type: data.imageType,
@@ -151,8 +147,8 @@ const SideBarGenerator = () => {
                 })
                 form.reset();
                 setIsStartGeneration(true);
-                setImgHeight(data.height);
-                setImgWidth(data.width);
+                setImgHeight(Number(data.height));
+                setImgWidth(Number(data.width));
                 setImgNumber(Number(data.imageNumber));
                 setGeneratedImages(response);
             }
