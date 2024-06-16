@@ -150,27 +150,38 @@ const Carousel = React.forwardRef<
 )
 Carousel.displayName = "Carousel"
 
-const CarouselContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const { carouselRef, orientation } = useCarousel()
+interface CarouselContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  initialIndex?: number;
+}
 
-  return (
-    <div ref={carouselRef} className="overflow-hidden">
-      <div
-        ref={ref}
-        className={cn(
-          "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
-          className
-        )}
-        {...props}
-      />
-    </div>
-  )
-})
-CarouselContent.displayName = "CarouselContent"
+const CarouselContent = React.forwardRef<HTMLDivElement, CarouselContentProps>(
+  ({ className, initialIndex = 0, ...props }, ref) => {
+    const { carouselRef, orientation, api } = useCarousel();
+
+    React.useEffect(() => {
+      if (api) {
+        api.scrollTo(initialIndex);
+      }
+    }, [api, initialIndex]);
+
+    return (
+      <div ref={carouselRef} className="overflow-hidden">
+        <div
+          ref={ref}
+          className={cn(
+            "flex",
+            orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+            className
+          )}
+          {...props}
+        />
+      </div>
+    );
+  }
+);
+CarouselContent.displayName = "CarouselContent";
+
+export default CarouselContent;
 
 const CarouselItem = React.forwardRef<
   HTMLDivElement,

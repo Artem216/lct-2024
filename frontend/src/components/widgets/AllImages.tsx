@@ -8,7 +8,8 @@ import { useState } from "react";
 
 const AllImages = () => {
   const { topNCards } = useAllImages();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState<number>(-1);
+
   return (
     <>
       <div className="w-[95%] mx-auto p-10 bg-light-1 rounded-2xl my-10">
@@ -35,7 +36,7 @@ const AllImages = () => {
         </div>
 
       </div>
-      <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={topNCards} />
+      <ImageCarousel openCarousel={openDialog >= 0} setOpenCarousel={setOpenDialog} topImages={topNCards} initialId={openDialog}/>
 
     </>
   )

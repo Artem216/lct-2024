@@ -12,7 +12,7 @@ interface ImageCardProps {
   imgSrc: string;
   imgPrompt: string;
   rating: number;
-  setOpenCarouselDialog: (value: React.SetStateAction<boolean>) => void;
+  setOpenCarouselDialog: (value: React.SetStateAction<number>) => void;
 }
 
 const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: ImageCardProps) => {
@@ -77,7 +77,7 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: 
     <>
       <div className="flex flex-col justify-between w-[400px] min-h-[500px] border-[2px] border-solid border-secondary-500 rounded-[25px] mx-auto">
         <div className="drop-shadow-lg m-5 mx-auto w-[85%] relative bg-primary-500" style={{ paddingTop: '85%' , cursor: "pointer"}}
-        onClick={() => {setOpenCarouselDialog(true)}} 
+        onClick={() => {setOpenCarouselDialog(imgId)}} 
         >
           <img src={imgSrc} alt="generated image" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>

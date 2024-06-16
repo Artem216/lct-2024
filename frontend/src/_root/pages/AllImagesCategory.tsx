@@ -9,7 +9,7 @@ const AllImagesCategory = () => {
   const [images, setImages] = useState<IResponseCard[]>();
   const { category } = useParams();
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState<number>(-1);
 
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const AllImagesCategory = () => {
           })}
         </div>
       </div>
-      {images && <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={images} />}
+      {images && <ImageCarousel openCarousel={openDialog >= 0} setOpenCarousel={setOpenDialog} topImages={images} initialId={openDialog}/>}
 
     </>
   )

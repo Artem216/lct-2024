@@ -9,7 +9,7 @@ import { saveAs } from 'file-saver';
 
 const MyImagesWidget = () => {
   const { myCards } = useAllImages();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState<number>(-1);
 
   const downloadImages = async () => {
     const zip = new JSZip();
@@ -48,7 +48,7 @@ const MyImagesWidget = () => {
           })}
         </div>
       </div>
-      <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={myCards} />
+      <ImageCarousel openCarousel={openDialog >= 0} setOpenCarousel={setOpenDialog} topImages={myCards} initialId={openDialog}/>
 
     </>
   )

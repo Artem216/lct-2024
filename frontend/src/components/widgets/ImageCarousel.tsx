@@ -1,22 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { IResponseCard, IResponseImage } from '@/services/apiImage';
 
 interface ImageCarouselProps {
     openCarousel: boolean;
-    setOpenCarousel: (open: boolean) => void;
+    setOpenCarousel: (open: number) => void;
     topImages: IResponseCard[] | IResponseImage[];
+    initialId: number;
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ openCarousel, setOpenCarousel, topImages }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ openCarousel, setOpenCarousel, topImages, initialId }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (openCarousel) {
+            const initialIndex = topImages.findIndex(image =>
+                'id' in image ? image.id === initialId : image.req_id === initialId
+            );
+            setCurrentIndex(initialIndex !== -1 ? initialIndex : 0);
+        }
+    }, [openCarousel, initialId, topImages]);
+
     return (
         <div>
-            <Dialog open={openCarousel} onOpenChange={setOpenCarousel}>
+            <Dialog open={openCarousel} onOpenChange={(value) => {
+                if(!value) setOpenCarousel(-1)
+                }}>
                 <DialogContent className="w-full max-w-[800px] max-h-[90vh] p-0">
                     <div className="relative">
                         <Carousel className="w-full max-h-[90vh]">
-                            <CarouselContent>
+                            <CarouselContent initialIndex={currentIndex}>
                                 {topImages.map((image, index) => (
                                     <CarouselItem key={index} className="flex justify-center items-center">
                                         <img
