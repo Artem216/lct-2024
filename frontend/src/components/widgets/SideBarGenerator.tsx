@@ -74,9 +74,8 @@ const SideBarGenerator = () => {
         color: z
             .string(),
         imageNumber: z
-            .number({
+            .string({
                 required_error: "Пожалуйста задайте количество картинок",
-                invalid_type_error: "Введите число"
             })
             .min(1).max(10),
 
@@ -88,7 +87,7 @@ const SideBarGenerator = () => {
             color: getRandomString(bgGenerationColors),
             width: 512,
             height: 512,
-            imageNumber: 1,
+            imageNumber: '1',
             prompt: "",
             imageType: "megabanner"
         },
@@ -103,7 +102,7 @@ const SideBarGenerator = () => {
         }
         try {
             const response = await ApiImage.generate({
-                n_variants: data.imageNumber,
+                n_variants: Number(data.imageNumber),
                 prompt: data.prompt,
                 width: data.width,
                 height: data.height,
@@ -118,12 +117,12 @@ const SideBarGenerator = () => {
             setIsStartGeneration(true);
             setImgHeight(data.height);
             setImgWidth(data.width);
-            setImgNumber(data.imageNumber);
+            setImgNumber(Number(data.imageNumber));
             setGeneratedImages(response);
         }
         catch (error) {
             return toast({
-                title: "Ошибка генерации. Попробуйте снова",
+                title: "Ошибка генерации. Попробуйте снова обновив страницу",
                 variant: "destructive",
             })
         }
@@ -134,12 +133,12 @@ const SideBarGenerator = () => {
         setLengthSymbols(promptValue?.length || 0);
     }, [promptValue]);
 
-    function cancelDialogLLM(){
+    function cancelDialogLLM() {
         setOpenConfirmDialog(false);
         setCheckLLM(false);
     }
 
-    async function confirmDialogLLM(){
+    async function confirmDialogLLM() {
         setOpenConfirmDialog(false);
         const isValid = await form.trigger();
 
@@ -313,78 +312,91 @@ const SideBarGenerator = () => {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div className="flex justify-between gap-2 items-center">
                         <div>
-                            <div className="flex items-center space-x-2 ml-5 my-5">
-                                <Checkbox
-                                    checked={checkColor}
-                                    onCheckedChange={(value) => { setCheckColor(value) }}
-                                />
-                                <label
-                                    className="text-sm text-black
+                            <div>
+                                <div>
+                                    <div className="flex items-center space-x-2 ml-5 my-5">
+                                        <Checkbox
+                                            checked={checkColor}
+                                            onCheckedChange={(value) => { setCheckColor(value) }}
+                                        />
+                                        <label
+                                            className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                >
-                                    Задать цвет фона
-                                </label>
-                            </div>
-                            {checkColor &&
-                                <FormField
-                                    control={form.control}
-                                    name="color"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        className="ml-5"
-                                                        type="color"
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        style={{ cursor: 'pointer', width: '60px', height: '40px' }}
-                                                    />
-                                                    <label
-                                                        className="text-sm text-black
+                                        >
+                                            Задать цвет фона
+                                        </label>
+                                    </div>
+                                    {checkColor &&
+                                        <FormField
+                                            control={form.control}
+                                            name="color"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                className="ml-5"
+                                                                type="color"
+                                                                value={field.value}
+                                                                onChange={field.onChange}
+                                                                style={{ cursor: 'pointer', width: '60px', height: '40px' }}
+                                                            />
+                                                            <label
+                                                                className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        Цвет фона
-                                                    </label>
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage className="shad-form_message" />
-                                        </FormItem>
-                                    )}
-                                />
-                            }
-                        </div>
+                                                            >
+                                                                Цвет фона
+                                                            </label>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage className="shad-form_message" />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    }
+                                </div>
 
-                        <div className="mt-3 ml-5">
-                            <label
-                                className="text-sm text-black
+                                <div className="mt-3 ml-5">
+                                    <label
+                                        className="text-sm text-black
                             font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Количество картинок
-                            </label>
-                            <div className="flex items-center w-[100px]">
-                                <FormField
-                                    control={form.control}
-                                    name="imageNumber"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input className="shad-input text-black mt-3"
-                                                    {...field} />
-                                            </FormControl>
-                                            <FormMessage className="shad-form_message" />
-                                        </FormItem>
-                                    )}
-                                />
+                                    >
+                                        Количество картинок
+                                    </label>
+                                    <div className="flex items-center w-[100px]">
+                                        <FormField
+                                            control={form.control}
+                                            name="imageNumber"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input className="shad-input text-black mt-3" type="number"
+                                                            {...field} />
+                                                    </FormControl>
+                                                    <FormMessage className="shad-form_message" />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <Button type="submit" className="shad-button_primary px-5 mx-auto mt-10">
-                        Сгенерировать
-                    </Button>
+                    <div className="flex mt-5 flex-col justify-end items-end gap-4">
+                        <div>
+                            <Button className="shad-button_secondary px-5 w-[200px]">
+                                Загрузить датасет
+                            </Button>
+                        </div>
+                        <div>
+                            <Button type="submit" className="shad-button_primary px-5 w-[200px]">
+                                Сгенерировать
+                            </Button>
+                        </div>
+                    </div>
                 </form>
             </Form>
             <ConfirmDialog

@@ -1,6 +1,6 @@
 import { useToast } from '@/components/ui/use-toast';
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { IResponseImage } from '@/services/apiImage';
+import { IResponseImage, IResponseGenerate } from '@/services/apiImage';
 import ApiImage from '@/services/apiImage';
 
 
@@ -51,7 +51,7 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
         }
     
         if (isStartGeneration && generatedImages.length > 0) {
-            const imageIds: number[] = generatedImages.map(image => image.req_id);
+            const imageIds: number[] = generatedImages.map(image => {return image.req_id});
             intervalId = setInterval(() => {
                 fetchImageStatus(imageIds);
             }, 2000);
@@ -62,7 +62,7 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
                 clearInterval(intervalId as number);
             }
         };
-    }, [isStartGeneration, generatedImages]);
+    }, [isStartGeneration]);
     
 
 

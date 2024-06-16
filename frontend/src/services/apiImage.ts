@@ -72,10 +72,17 @@ export interface IResponseImage {
     ]; 
 }
 
+
+export interface IResponseGenerate {
+    id: number;
+    status: string;
+}
+
 export interface IRating {
     imageId: number;
     changeType: "add" | "delete";
 }
+
 
 
 const ApiImage = {
@@ -87,8 +94,29 @@ const ApiImage = {
             }
         }
 
-        const response = await axios.post<IResponseImage[]>(`${BASE_URL}/api/v1/predict`, data, config);
-        return response.data;
+        const response = await axios.post<IResponseGenerate[]>(`${BASE_URL}/api/v1/predict`, data, config);
+        const responseImgs: IResponseImage[] = response.data.map((data) => {
+            const imageObg: IResponseImage = {
+                user_id: 0,
+                req_id: data.id,
+                child_s3_url: "",
+                parent_s3_url: "",
+                x: 0,
+                y: 0,
+                colour: "",
+                child_w: 0,
+                child_h: 0,
+                rating: 0,
+                prompt: "",
+                width: 0,
+                height: 0,
+                goal: "",
+                status: data.status
+            }
+            return imageObg
+        })
+        
+        return responseImgs;
     },
     async getImageById(imgId: number) {
         let config = {

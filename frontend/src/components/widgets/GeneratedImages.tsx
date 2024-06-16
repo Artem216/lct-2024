@@ -14,6 +14,7 @@ const GeneratedImages = () => {
                     <>
                         <div className="flex justify-between mx-5 flex-wrap gap-5">
                             {generatedImages.map((image) => {
+                                console.log(image)
                                 return (
                                     <ImageGenerateCard
                                         key={image.req_id}
