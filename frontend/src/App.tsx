@@ -1,6 +1,6 @@
 import SigninForm from './_auth/forms/SigninForm'
 import SignupForm from './_auth/forms/SignupForm'
-import { Home, Editor, Generator, AdminPanel, MyImages, AllTopImages} from './_root/pages'
+import { Home, Editor, Generator, AdminPanel, MyImages, AllTopImages, EditorEmpty} from './_root/pages'
 import { Routes, Route } from 'react-router-dom'
 import { Toaster } from "@/components/ui/toaster"
 
@@ -23,6 +23,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path='/generator' element={<Generator />} />
           <Route path='/editor/:imageType/:imageId' element={<Editor />} />
+          <Route path='/editor' element={<EditorEmpty />} />
           <Route path='/admin-panel' element={<AdminPanel />} />
           <Route path='/top-images' element={<AllTopImages />} />
           <Route path='/my-images' element={<MyImages />} />
