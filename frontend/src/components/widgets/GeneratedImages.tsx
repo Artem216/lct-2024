@@ -7,6 +7,7 @@ import { useState } from "react";
 const GeneratedImages = () => {
     const leftSideBarWidth = 400;
     const { isStartGeneration, imgHeight, imgWidth, generatedImages } = useGeneratorImages();
+    console.log(generatedImages, 'generatedImages')
 
     return (
         <>
@@ -21,7 +22,7 @@ const GeneratedImages = () => {
                                     <ImageGenerateCard
                                         key={image.req_id}
                                         status={image.status}
-                                        imgSrc={image.child_s3_url ? image.child_s3_url : ""}
+                                        imgSrc={image.parent_s3_url ? image.parent_s3_url : ""}
                                         imgHeight={imgHeight}
                                         imgWidth={imgWidth}
                                         imgId={image.req_id}

@@ -22,7 +22,6 @@ const AllImagesProvider = ({ children }: { children: ReactNode }) => {
         async function fetchTopNCards(topN: number) {
             try {
                 const response = await ApiImage.getTopCards(topN)
-                console.log(response)
                 setTopNCards(response);
             } catch (error) {
                 console.log(error);
@@ -32,7 +31,6 @@ const AllImagesProvider = ({ children }: { children: ReactNode }) => {
         async function fetchTopAllCards(topN: number) {
             try {
                 const response = await ApiImage.getTopCards(topN);
-                console.log(response)
                 setTopAllCards(response);
             } catch (error) {
                 console.log(error);
@@ -43,7 +41,6 @@ const AllImagesProvider = ({ children }: { children: ReactNode }) => {
         async function fetchMyCards() {
             try {
                 const response = await ApiImage.getAllUserCards();
-                console.log(response)
                 setMyCards(response);
             } catch (error) {
                 console.log(error);

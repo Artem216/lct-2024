@@ -35,7 +35,13 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
         async function fetchImageStatus(ids: number[]) {
             try {
                 const response = await ApiImage.getSeveralImagesByIds(ids);
-                setGeneratedImages(response);
+                console.log(response, "response")
+                setGeneratedImages((prevImages) => 
+                    prevImages.map(image => {
+                        const updatedImage = response.find(newImage => newImage.req_id === image.req_id);
+                        return updatedImage ? { ...image, ...updatedImage } : image;
+                    })
+                );
     
                 // Check if all images have status 'complete'
                 const allComplete = response.every(image => image.status === 'complete');
