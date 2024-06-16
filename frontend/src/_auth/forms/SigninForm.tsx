@@ -5,7 +5,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -17,13 +16,12 @@ import { z } from "zod"
 import { useToast } from "@/components/ui/use-toast"
 import { useUserContext } from "@/context/AuthContext"
 import { useNavigate } from "react-router-dom"
-import Loader from "@/components/shared/Loader"
 import ApiAuth from "@/services/apiAuth"
 
 
 const SigninForm = () => {
   const { toast } = useToast();
-  const { isLoading: isUserLoading , setIsAuth} = useUserContext();
+  const { setIsAuth } = useUserContext();
   const navigate = useNavigate();
 
 
@@ -91,11 +89,7 @@ const SigninForm = () => {
               <Link to="/sign-up" className="text-dark-1 underline text-small-semibold ml-1">Зарегистрироваться</Link>
             </p>
             <Button type="submit" className="shad-button_primary px-[15%]">
-              {isUserLoading ? (
-                <div className="flex-center gap-2">
-                  <Loader />Загрузка...
-                </div>
-              ) : "Войти"}
+              Войти
             </Button>
           </div>
         </form>

@@ -1,5 +1,4 @@
 export interface IContextType{
-     isLoading: boolean; 
      isAuth: boolean; 
      setIsAuth: React.Dispatch<React.SetStateAction<boolean>>; 
 }
@@ -38,14 +37,6 @@ export interface IUpdatePost {
     tags?: string;
 };
 
-export interface IUser {
-    id: string;
-    name: string;
-    username: string;
-    email: string;
-    imageUrl: string;
-    bio: string;
-};
 
 export interface INewUser {
     name: string;
@@ -53,3 +44,19 @@ export interface INewUser {
     username: string;
     password: string;
 };
+
+
+export interface IUser {
+    id: number;
+    name: string;
+    is_admin: boolean;
+    email: string;
+    good_generated: number;
+    bad_generated: number;
+    all_generated: number;
+}
+
+export interface IUserStatistics {
+    x: string[];
+    y: number[];
+}
