@@ -5,7 +5,7 @@ from schemas.find_schemas import AllCards, TopCards
 
 from db.dependencies import get_current_user
 
-from services.find_service import get_all_cards, get_top_cards
+from services.find_service import get_all_cards, get_top_cards, get_cards_by_theme
 
 from typing import List
 
@@ -19,8 +19,23 @@ router = APIRouter(prefix="", tags=["find"])
 async def find_all(
     current_user: UserDto = Depends(get_current_user),
 ) -> List[AllCards]:
-    try:
-       
+    """
+    Получение всех карточек пользователя.
+
+    Данный эндпойнт позволяет получить список всех карточек пользователя. Если пользователь является администратором,
+    он получит список карточек всех пользователей.
+
+    Args:
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[AllCards]: Список объектов AllCards, содержащих информацию о карточках.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении карточек.
+    """
+
+    try:   
         cards = await get_all_cards(current_user.id, current_user.is_admin)
         
         return cards
@@ -34,6 +49,21 @@ async def top_pictures(
     n: int,
     current_user: UserDto = Depends(get_current_user),
 ) -> List[TopCards]:
+    """
+    Получение N самых популярных карточек.
+
+    Данный эндпойнт позволяет получить список N самых популярных (с наивысшим рейтингом) карточек.
+
+    Args:
+        n (int): Количество карточек, которое необходимо получить.
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[TopCards]: Список объектов TopCards, содержащих информацию о самых популярных карточках.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении списка популярных карточек.
+    """
     try:
         
         cards = await get_top_cards(n)
@@ -45,3 +75,31 @@ async def top_pictures(
 
 
 
+@router.get("/cards/{theme}", response_model=List[TopCards], status_code=status.HTTP_200_OK)
+async def top_pictures(
+    theme: str,
+    current_user: UserDto = Depends(get_current_user),
+) -> List[TopCards]:
+    """
+    Получить лучшие карточки по теме.
+
+    Этот эндпоинт позволяет получить список лучших карточек по указанной теме.
+
+    Args:
+        theme (str): Тема для поиска карточек.
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        List[TopCards]: Список лучших карточек по указанной теме.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении карточек.
+    """
+    try:
+        logger.info(theme)
+        cards = await get_cards_by_theme(theme)
+        
+        return cards
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

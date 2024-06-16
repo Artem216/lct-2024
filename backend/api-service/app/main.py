@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from api.endpoints import auth
 from api.endpoints import predict
 from api.endpoints import find
+from api.endpoints import rating
+from api.endpoints import admin
 from contextlib import asynccontextmanager
 from db.database import db
 
@@ -51,13 +53,15 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Set this to the appropriate origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Set this to the allowed HTTP methods
-    allow_headers=["*"],  # Set this to the allowed headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
 app.include_router(auth.router)
 app.include_router(predict.router, prefix="/api/v1")
 app.include_router(find.router, prefix="/api/v1")
+app.include_router(rating.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")
