@@ -24,6 +24,7 @@ import { useGeneratorImages } from "@/context/GeneratorImagesContext"
 import { getRandomString, validatePromptForTags } from "@/lib/utils"
 import ConfirmDialog from "../shared/ConfirmDialog"
 import FileUploader from "./FileUploader"
+import { useFileUploader } from "@/context/FileUploaderContext"
 
 type CheckedState = boolean | 'indeterminate';
 
@@ -41,15 +42,17 @@ const SideBarGenerator = () => {
         setImgNumber, setGeneratedImages
     } = useGeneratorImages();
 
+    const { file, handleFileUpload, setFile, currentClust, currentId } = useFileUploader();
+
 
     const FormSchema = z.object({
         product: z
             .string({
-                required_error: "Пожалуйста выберите продукт или заполните по умолчанию",
+                required_error: "Пожалуйста выберите продукт",
             }),
         channel: z
             .string({
-                required_error: "Пожалуйста выберите канал или заполните по умолчанию",
+                required_error: "Пожалуйста выберите канал",
             }),
         prompt: z
             .string()
@@ -101,31 +104,64 @@ const SideBarGenerator = () => {
             setOpenConfirmDialog(true);
             return;
         }
-        try {
-            const response = await ApiImage.generate({
-                n_variants: Number(data.imageNumber),
-                prompt: data.prompt,
-                width: data.width,
-                height: data.height,
-                goal: data.channel,
-                product: data.product,
-                image_type: data.imageType,
-                colour: data.color,
-                use_llm: useLLM,
-
-            })
-            form.reset();
-            setIsStartGeneration(true);
-            setImgHeight(data.height);
-            setImgWidth(data.width);
-            setImgNumber(Number(data.imageNumber));
-            setGeneratedImages(response);
+        if (file) {
+            try {
+                const response = await ApiImage.generateFromFile({
+                    n_variants: Number(data.imageNumber),
+                    prompt: data.prompt,
+                    width: data.width,
+                    height: data.height,
+                    goal: data.channel,
+                    product: data.product,
+                    image_type: data.imageType,
+                    colour: data.color,
+                    use_llm: false,
+                    id_user_from_csv: Number(currentId),
+                    cluster_name: currentClust,
+                }, file)
+                form.reset();
+                setIsStartGeneration(true);
+                setImgHeight(data.height);
+                setImgWidth(data.width);
+                setImgNumber(Number(data.imageNumber));
+                setGeneratedImages(response);
+            }
+            catch (error) {
+                return toast({
+                    title: "Ошибка генерации. Попробуйте снова обновив страницу",
+                    variant: "destructive",
+                })
+            }
         }
-        catch (error) {
-            return toast({
-                title: "Ошибка генерации. Попробуйте снова обновив страницу",
-                variant: "destructive",
-            })
+        else {
+
+
+            try {
+                const response = await ApiImage.generate({
+                    n_variants: Number(data.imageNumber),
+                    prompt: data.prompt,
+                    width: data.width,
+                    height: data.height,
+                    goal: data.channel,
+                    product: data.product,
+                    image_type: data.imageType,
+                    colour: data.color,
+                    use_llm: useLLM,
+
+                })
+                form.reset();
+                setIsStartGeneration(true);
+                setImgHeight(data.height);
+                setImgWidth(data.width);
+                setImgNumber(Number(data.imageNumber));
+                setGeneratedImages(response);
+            }
+            catch (error) {
+                return toast({
+                    title: "Ошибка генерации. Попробуйте снова обновив страницу",
+                    variant: "destructive",
+                })
+            }
         }
     }
 
@@ -387,12 +423,28 @@ const SideBarGenerator = () => {
                             </div>
                         </div>
 
-                        <div className="flex mt-5 flex-col justify-end items-end gap-4">
+                        <div className="flex gap-2 justify-between my-5">
                             <div>
-                                <Button className="shad-button_secondary px-5 w-[200px]">
-                                    Загрузить датасет
+                                <Button type="button" className="text-black border border-gray-800 px-5 w-[150px]"
+                                    onClick={() => { setFile(null) }}>
+                                    Удалить датасет
                                 </Button>
                             </div>
+                            <div>
+                                <label htmlFor="file-upload" className="shad-button_secondary py-2 px-5 w-[200px] cursor-pointer
+                                 rounded-tr-[15px] rounded-tl-[50px] rounded-bl-[15px] rounded-br-[50px] h-10 text-center">
+                                    Загрузить датасет
+                                </label>
+                                <input
+                                    id="file-upload"
+                                    type="file"
+                                    accept=".csv"
+                                    className="hidden"
+                                    onChange={handleFileUpload}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex mt-5 flex-col justify-end items-end gap-4">
                             <div>
                                 <Button type="submit" className="shad-button_primary px-5 w-[200px]">
                                     Сгенерировать

@@ -29,7 +29,7 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: Image
     }
 
 
-    async function handleRating(rating: IRating){
+    async function handleRating(rating: IRating) {
         const reponse = await ApiImage.changeRating(rating)
         if (reponse) {
             toast({
@@ -48,38 +48,40 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: Image
                     <LoadingSkeleton width={imgWidth} height={imgHeight} />
                 )}
             </div>
-            <div className="flex justify-between items-center mt-3 mx-3">
-                <div className='flex gap-5'>
-                    <IconButton
-                        iconSrc={cross_path}
-                        borderColor='#A94545'
-                        altText="Edit"
-                        onClick={() => handleRating({
-                            imageId: imgId,
-                            changeType: "delete"
-                        })}
-                    />
-                    <IconButton
-                        iconSrc={tick_path}
-                        borderColor='#A4E5A2'
-                        altText="Edit"
-                        onClick={() => handleRating({
-                            imageId: imgId,
-                            changeType: "add"
-                        })}
-                    />
-                    <IconButton
-                        iconSrc={repeat_path}
-                        borderColor='white'
-                        altText="Edit"
-                        onClick={() => alert('Edit button clicked')}
-                    />
+            {status === "complete" &&
+                <div className="flex justify-between items-center mt-3 mx-3">
+                    <div className='flex gap-5'>
+                        <IconButton
+                            iconSrc={cross_path}
+                            borderColor='#A94545'
+                            altText="Edit"
+                            onClick={() => handleRating({
+                                imageId: imgId,
+                                changeType: "delete"
+                            })}
+                        />
+                        <IconButton
+                            iconSrc={tick_path}
+                            borderColor='#A4E5A2'
+                            altText="Edit"
+                            onClick={() => handleRating({
+                                imageId: imgId,
+                                changeType: "add"
+                            })}
+                        />
+                        <IconButton
+                            iconSrc={repeat_path}
+                            borderColor='white'
+                            altText="Edit"
+                        // onClick={() => alert('Edit button clicked')}
+                        />
+                    </div>
+                    <Button variant="default" className="shad-button_secondary px-5"
+                        onClick={goToConstructor}>
+                        Редактировать
+                    </Button>
                 </div>
-                <Button variant="default" className="shad-button_secondary px-5"
-                    onClick={goToConstructor}>
-                    Редактировать
-                </Button>
-            </div>
+            }
         </div>
     );
 };

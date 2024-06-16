@@ -134,7 +134,29 @@ const ApiImage = {
         formData.append('file', dataFile);
         formData.append('data', JSON.stringify(generateDataFile)); 
 
-        return await axios.post(`${BASE_URL}/api/v1/videos`, formData, config);
+        const response = await axios.post<IResponseGenerate[]>(`${BASE_URL}/api/v1/predict_file`, formData, config);
+        const responseImgs: IResponseImage[] = response.data.map((data) => {
+            const imageObg: IResponseImage = {
+                user_id: 0,
+                req_id: data.id,
+                child_s3_url: "",
+                parent_s3_url: "",
+                x: 0,
+                y: 0,
+                colour: "",
+                child_w: 0,
+                child_h: 0,
+                rating: 0,
+                prompt: "",
+                width: 0,
+                height: 0,
+                goal: "",
+                status: data.status
+            }
+            return imageObg
+        })
+        
+        return responseImgs;
     },
     async getImageById(imgId: number) {
         let config = {

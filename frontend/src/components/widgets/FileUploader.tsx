@@ -14,24 +14,29 @@ import {
     PaginationPrevious,
     PaginationNext
 } from "@/components/ui/pagination";
+import { useFileUploader } from "@/context/FileUploaderContext";
 
 interface FileUploaderProps { }
 
 const FileUploader: React.FC<FileUploaderProps> = () => {
-    const [file, setFile] = useState<File | null>(null);
     const [data, setData] = useState<string[][]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const itemsPerPage = 6;
-    const [uniqueSuperClust, setUniqueSuperClust] = useState<string[]>([]); // State for unique super_clust values
-    const [currentClust, setCurrentClust] = useState<string>(""); // State for currently selected super_clust
-    const [filteredData, setFilteredData] = useState<string[][]>([]); // State for filtered data based on currentClust
-    const [uniqueIds, setUniqueIds] = useState<string[]>([]); // State for unique id values
-    const [currentId, setCurrentId] = useState<string>(""); // State for currently selected id
-    const [headerRow, setHeaderRow] = useState<string[]>([]); // State for storing header row
+    const [uniqueSuperClust, setUniqueSuperClust] = useState<string[]>([]);
+    const [filteredData, setFilteredData] = useState<string[][]>([]);
+    const [uniqueIds, setUniqueIds] = useState<string[]>([]);
+    const [headerRow, setHeaderRow] = useState<string[]>([]);
 
-    const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setFile(file);
+    const { currentClust, setCurrentClust, currentId, setCurrentId, setFile, file } = useFileUploader();
+
+    useEffect(() => {
+        if (file) handleFileParse();
+        else handleDeleteFile();
+    }, [file])
+
+    const handleFileParse = () => {
+        // const file = e.target.files?.[0] || null;
+        // setFile(file);
         if (file) {
             const reader = new FileReader();
             reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -47,7 +52,7 @@ const FileUploader: React.FC<FileUploaderProps> = () => {
                     );
                 });
                 setData(tableData);
-    
+
                 // Extract unique values from 'super_clust' column
                 const superClustIndex = headerRow.findIndex(
                     (header) => header.trim() === 'super_clust'
@@ -58,7 +63,7 @@ const FileUploader: React.FC<FileUploaderProps> = () => {
                     );
                     setUniqueSuperClust(uniqueValues);
                 }
-    
+
                 // Extract unique values from 'id' column
                 const idIndex = headerRow.findIndex(
                     (header) => header.trim() === 'id'
@@ -69,14 +74,14 @@ const FileUploader: React.FC<FileUploaderProps> = () => {
                     );
                     setUniqueIds(uniqueIds);
                 }
-    
+
                 // Set header row for table
                 setHeaderRow(headerRow);
             };
             reader.readAsText(file);
         }
     };
-    
+
     const handleDeleteFile = () => {
         setData([])
         setFile(null)
@@ -84,6 +89,8 @@ const FileUploader: React.FC<FileUploaderProps> = () => {
         setCurrentClust("")
         setFilteredData([])
         setCurrentId("")
+        setUniqueSuperClust([])
+        setUniqueIds([])
     }
 
     const handlePrevPage = () => {
@@ -135,16 +142,11 @@ const FileUploader: React.FC<FileUploaderProps> = () => {
         <section className="w-full text-black bg-white">
             <div className="container grid gap-8 px-4 md:px-6">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">CSV File Upload</h2>
-                    <div className="flex items-center gap-4">
-                        <label
-                            htmlFor="file-upload"
-                            className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                        >
-                            Upload CSV
-                        </label>
-                        <input id="file-upload" type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
-                    </div>
+                    {uniqueSuperClust.length > 0 &&
+                        <div>
+                            Вы можете выбрать либо одного пользователя,<br></br>
+                            либо кластер пользователей, для которых хотите сгенерировать картинки
+                        </div>}
                     {uniqueSuperClust.length > 0 && (
                         <select
                             className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-primary-500/10
