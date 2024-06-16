@@ -137,6 +137,7 @@ const SideBarGenerator = () => {
 
 
             try {
+                console.log(data.prompt, 'prompt')
                 const response = await ApiImage.generate({
                     n_variants: Number(data.imageNumber),
                     prompt: data.prompt,
