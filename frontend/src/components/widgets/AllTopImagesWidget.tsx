@@ -23,18 +23,13 @@ const AllTopImagesWidget = () => {
         <div className="flex justify-between mx-20 flex-wrap gap-5">
           {topAllCards.map((card) => {
             return (
-              <div
-                key={card.id}
-                className="cursor-pointer"
-                onClick={() => setOpenDialog(true)} 
-              >
                 <ImageCard
                   rating={card.rating}
                   imgPrompt={card.prompt}
                   imgSrc={card.child_s3_url}
                   imgId={card.id}
+                  setOpenCarouselDialog={setOpenDialog}
                 />
-              </div>
             );
           })}
         </div>

@@ -18,16 +18,12 @@ const MyImagesWidget = () => {
           {myCards.map((card) => {
 
             return (
-              <div
-                key={card.req_id}
-                className="cursor-pointer"
-                onClick={() => setOpenDialog(true)}
-              >
-                <ImageCard rating={card.rating}
-                  imgPrompt={card.prompt}
-                  imgSrc={card.child_s3_url}
-                  imgId={card.req_id} />
-              </div>
+              <ImageCard rating={card.rating}
+                imgPrompt={card.prompt}
+                imgSrc={card.child_s3_url}
+                imgId={card.req_id}
+                setOpenCarouselDialog={setOpenDialog}
+              />
             )
           })}
         </div>

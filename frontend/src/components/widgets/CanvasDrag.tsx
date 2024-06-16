@@ -139,6 +139,7 @@ const DraggableText = ({
                 onTap={onSelect}
                 onDragEnd={onDragEnd}
                 ref={textRef}
+                fontFamily='Helvetica'
             />
             {isSelected && (
                 <Transformer

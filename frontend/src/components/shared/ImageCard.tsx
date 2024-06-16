@@ -12,9 +12,10 @@ interface ImageCardProps {
   imgSrc: string;
   imgPrompt: string;
   rating: number;
+  setOpenCarouselDialog: (value: React.SetStateAction<boolean>) => void;
 }
 
-const ImageCard = ({ imgSrc, imgPrompt, rating, imgId }: ImageCardProps) => {
+const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: ImageCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -75,7 +76,9 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId }: ImageCardProps) => {
   return (
     <>
       <div className="flex flex-col justify-between w-[400px] min-h-[500px] border-[2px] border-solid border-secondary-500 rounded-[25px] mx-auto">
-        <div className="drop-shadow-lg m-5 mx-auto w-[85%] relative bg-primary-500" style={{ paddingTop: '85%' }}>
+        <div className="drop-shadow-lg m-5 mx-auto w-[85%] relative bg-primary-500" style={{ paddingTop: '85%' , cursor: "pointer"}}
+        onClick={() => {setOpenCarouselDialog(true)}} 
+        >
           <img src={imgSrc} alt="generated image" className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
         <div className="p-3 text-dark-1 text-left">
