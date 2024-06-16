@@ -56,3 +56,20 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
 export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
+
+export function getRandomString(strings: string[]): string {
+  const randomIndex = Math.floor(Math.random() * strings.length);
+  return strings[randomIndex];
+}
+
+export function validatePromptForTags(input: string): boolean {
+  const words = input.trim().split(/\s+/);
+  
+  if (words.length > 5) {
+    if (!input.includes(',')) {
+      return false;
+    }
+  }
+
+  return true;
+}

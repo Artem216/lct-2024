@@ -13,8 +13,13 @@ const storage = {
   getRole: () => {
     return JSON.parse(window.localStorage.getItem(`${storagePrefix}role`) as string);
   },
-  setRole: (role: string) => {
-    window.localStorage.setItem(`${storagePrefix}role`, JSON.stringify(role));
+  setRole: (is_admin: boolean) => {
+    if (is_admin) {
+      window.localStorage.setItem(`${storagePrefix}role`, JSON.stringify("admin"));
+    }
+    else {
+      window.localStorage.setItem(`${storagePrefix}role`, JSON.stringify("user"));
+    }
   },
   clearRole: () => {
     window.localStorage.removeItem(`${storagePrefix}role`);

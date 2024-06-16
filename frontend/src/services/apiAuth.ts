@@ -13,6 +13,12 @@ interface CreateUserData {
     name: string;
 }
 
+interface IUserResponse {
+    access_token: string;
+    token_type: string;
+    is_admin: boolean;
+}
+
 const ApiAuth = {
 
     async loginUser(data: UserLogin) {
@@ -24,20 +30,20 @@ const ApiAuth = {
         }
 
         const response = await axios
-            .post(`${BASE_URL}/login`, data, config)
+            .post<IUserResponse>(`${BASE_URL}/login`, data, config)
 
         console.log(response.data)
-        storage.setToken(response.data["access_token"]);
-        // storage.setRole(response.data.role);
+        storage.setToken(response.data.access_token);
+        storage.setRole(response.data.is_admin);
         return;
     },
 
     async singUpUser(data: CreateUserData) {
         const response = await axios
-            .post(`${BASE_URL}/signup`, data);
+            .post<IUserResponse>(`${BASE_URL}/signup`, data);
 
-        storage.setToken(response.data["access_token"]);
-        // storage.setRole(response.data.role);
+        storage.setToken(response.data.access_token);
+        storage.setRole(response.data.is_admin);
         return;
     },
 };

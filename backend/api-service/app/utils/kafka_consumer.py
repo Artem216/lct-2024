@@ -18,17 +18,35 @@ async def consume(consumer: AIOKafkaConsumer):
             task = json.loads(msg.value.decode('utf-8'))
 
             task_id = task['id']
-            s3_url = task['s3_url']
+            child_s3_url = task['child_s3_url']
+            parent_s3_url = task['parent_s3_url']
+            x = task['x']
+            y = task['y']
             status = task['status']
-            user_id = task['user_id'] 
+            child_w = task['child_w']
+            child_h = task['child_h']
+            user_id = task['user_id']
+            colour= task['colour'] 
+            prompt = task['prompt']
 
 
-            res = await add_response(task_id, s3_url, user_id)
+            res = await add_response(task_id, 
+                                     child_s3_url, 
+                                     parent_s3_url, 
+                                     x, 
+                                     y, 
+                                     user_id, 
+                                     child_w, 
+                                     child_h, 
+                                     colour,
+                                     prompt
+                                     )
+
     except Exception as ex:
         logger.info(ex)
 
     finally:
-        logger.log("Stop")
+        logger.info("Stop")
 
 if __name__ == "__main__":
     asyncio.run(consume())

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import logo_text from "../../assets/gazprom_fill_logo_text.svg"
 import { Button } from "../ui/button"
 import storage from "@/lib/storage"
-import { topbarLinks } from "@/constants"
+import { topbarLinks, topbarAdminLinks } from "@/constants"
 
 const TopBar = () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ const TopBar = () => {
 
     return (
         <>
-            <div className="flex justify-between px-10">
+            <div className="flex justify-between px-10 mb-2">
                 <Link to='/' className="flex gap-3 items-center">
                     <img src={logo_text} alt="logo" width={150} />
                 </Link>
@@ -31,6 +31,23 @@ const TopBar = () => {
                             </Link>
                         )
                     })}
+                    {storage.getRole() === "admin" && (
+                        <>
+                            {
+                                topbarAdminLinks.map((link) => {
+                                    const isActive = pathname === link.route;
+
+                                    return (
+                                        <Link to={link.route}
+                                            key={link.label}
+                                            className={`flex-center flex-col gap-1 p-2 transition `}>
+                                            <p className={`${isActive && 'underline'}  small-medium text-black`}>{link.label}</p>
+                                        </Link>
+                                    )
+                                })
+                            }
+                        </>
+                    )}
                 </div>
                 <Button variant="default" className="shad-button_secondary px-5"
                     onClick={() => signOut()}>

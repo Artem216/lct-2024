@@ -19,3 +19,4 @@ class Login(AuthBase):
 class AccessToken(BaseModel):
     access_token: str
     token_type: str = "Bearer"
+    is_admin : bool
