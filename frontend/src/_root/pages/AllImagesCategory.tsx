@@ -1,26 +1,28 @@
-import { useAllImages } from "@/context/AllImagesContext"
 import ImageCard from "@/components/shared/ImageCard";
 import ApiImage, { IResponseCard } from "@/services/apiImage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { categoryToTitle } from "@/constants";
+import ImageCarousel from "@/components/widgets/ImageCarousel";
 
 const AllImagesCategory = () => {
   const [images, setImages] = useState<IResponseCard[]>();
   const { category } = useParams();
 
+  const [openDialog, setOpenDialog] = useState(false);
+
 
   useEffect(() => {
     async function fetchImageStatus(category: string) {
-        try {
-            const imageCards = await ApiImage.getCardsByCategory(category);
-            console.log('imageCards', imageCards)
-            if(imageCards) setImages(imageCards)
-        } catch (error) {
-            console.log(error)
-        }
+      try {
+        const imageCards = await ApiImage.getCardsByCategory(category);
+        console.log('imageCards', imageCards)
+        if (imageCards) setImages(imageCards)
+      } catch (error) {
+        console.log(error)
+      }
     }
-    if(category) fetchImageStatus(category)
+    if (category) fetchImageStatus(category)
   }, [])
 
   return (
@@ -35,12 +37,14 @@ const AllImagesCategory = () => {
             return (
               <ImageCard rating={card.rating}
                 imgPrompt={card.prompt}
-                imgSrc={card.child_s3_url} 
-                imgId={card.id}/>
+                imgSrc={card.child_s3_url}
+                imgId={card.id}
+                setOpenCarouselDialog={setOpenDialog} />
             )
           })}
         </div>
       </div>
+      {images && <ImageCarousel openCarousel={openDialog} setOpenCarousel={setOpenDialog} topImages={images} />}
 
     </>
   )

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { useAdmin } from '@/context/AdminContext';
 

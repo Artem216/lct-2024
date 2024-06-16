@@ -1,6 +1,5 @@
-import React from 'react';
 import { Button } from "../ui/button";
-import { useToast } from "@/components/ui/use-toast"; // Импортируем ваш механизм уведомлений
+import { useToast } from "@/components/ui/use-toast";
 import IconButton from './IconButton';
 import cross_path from '../../assets/cross.png';
 import tick_path from '../../assets/tick.png';

@@ -1,6 +1,6 @@
 import { useToast } from '@/components/ui/use-toast';
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { IResponseImage, IResponseGenerate } from '@/services/apiImage';
+import { IResponseImage } from '@/services/apiImage';
 import ApiImage from '@/services/apiImage';
 
 

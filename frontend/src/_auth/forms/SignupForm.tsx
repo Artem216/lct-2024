@@ -16,13 +16,12 @@ import { z } from "zod"
 import { useToast } from "@/components/ui/use-toast"
 import { useUserContext } from "@/context/AuthContext"
 import { useNavigate } from "react-router-dom"
-import Loader from "@/components/shared/Loader"
 import ApiAuth from "@/services/apiAuth"
 
 
 const SignupForm = () => {
   const { toast } = useToast();
-  const { isLoading: isUserLoading, setIsAuth } = useUserContext();
+  const { setIsAuth } = useUserContext();
   const navigate = useNavigate();
 
 
@@ -117,11 +116,7 @@ const SignupForm = () => {
               <Link to="/sign-in" className="text-dark-1 underline text-small-semibold ml-1">Войти</Link>
             </p>
             <Button type="submit" className="shad-button_primary px-[15%]">
-              {isUserLoading ? (
-                <div className="flex-center gap-2">
-                  <Loader />Загрузка...
-                </div>
-              ) : "Зарегистрироваться"}
+              Зарегистрироваться
             </Button>
           </div>
         </form>

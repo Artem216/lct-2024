@@ -106,7 +106,6 @@ const DraggableImage = ({
 };
 
 const DraggableText = ({
-    id,
     x,
     y,
     text,

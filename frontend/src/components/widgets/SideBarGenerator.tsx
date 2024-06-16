@@ -23,7 +23,6 @@ import ApiImage from "@/services/apiImage"
 import { useGeneratorImages } from "@/context/GeneratorImagesContext"
 import { getRandomString, validatePromptForTags } from "@/lib/utils"
 import ConfirmDialog from "../shared/ConfirmDialog"
-import FileUploader from "./FileUploader"
 import { useFileUploader } from "@/context/FileUploaderContext"
 
 type CheckedState = boolean | 'indeterminate';

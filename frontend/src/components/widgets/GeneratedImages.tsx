@@ -1,8 +1,6 @@
 import { useGeneratorImages } from "@/context/GeneratorImagesContext";
 import ImageGenerateCard from "../shared/ImageGenerateCard"
 import FileUploader from "./FileUploader";
-import { useState } from "react";
-
 
 const GeneratedImages = () => {
     const leftSideBarWidth = 400;

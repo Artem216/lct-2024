@@ -1,5 +1,4 @@
 export interface IContextType{
-     isLoading: boolean; 
      isAuth: boolean; 
      setIsAuth: React.Dispatch<React.SetStateAction<boolean>>; 
 }
