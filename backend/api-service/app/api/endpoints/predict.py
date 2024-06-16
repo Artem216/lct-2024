@@ -27,6 +27,21 @@ router = APIRouter(prefix="", tags=["predict"])
 
 
 def checker(data: str = Form(...)):
+    """
+    Проверить данные формы.
+
+    Этот метод проверяет входные данные формы, используя модель валидации PredictRequestFile.
+    Если данные не соответствуют ожиданиям модели, генерируется исключение HTTP 422.
+
+    Args:
+        data (str): Входные данные формы в виде строки.
+
+    Returns:
+        Объект, прошедший валидацию моделью PredictRequestFile.
+
+    Raises:
+        HTTPException: Если входные данные не проходят валидацию, генерируется исключение с кодом статуса 422 и подробностями ошибки.
+    """
     try:
         return PredictRequestFile.model_validate_json(data)
     except ValidationError as e:
@@ -64,7 +79,7 @@ async def text_to_image(
         
         requests = []
         for _ in range(predict_data.n_variants):
-
+            logger.info(predict_data.product is None)
             # Cохранение в бд запроса
             req = await add_request(user_id = current_user.id, predict_data= predict_data)
                         
@@ -85,6 +100,23 @@ async def file_to_text(
     file: UploadFile = File(...),
     current_user: UserDto = Depends(get_current_user),
 ) -> List[PredictResponse]:
+    """
+    Обработать файл для предсказания.
+
+    Этот эндпоинт позволяет пользователю загрузить файл и выполнить предсказание на основе данных в файле.
+    Входные данные проверяются с помощью функции checker.
+
+    Args:
+        predict_data_file (PredictRequestFile): Данные для предсказания, полученные из формы и проверенные функцией checker.
+        file (UploadFile): Загруженный пользователем файл.
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        List[PredictResponse]: Список ответов на предсказание, каждый из которых содержит ID запроса и его статус.
+
+    Raises:
+        HTTPException: Если произошла ошибка при обработке запроса, генерируется исключение с кодом статуса 400 и подробностями ошибки.
+    """
     try:
         logger.info(f"Received predict request for user: {current_user.name}")
         contents = await file.read()

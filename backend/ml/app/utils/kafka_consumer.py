@@ -3,17 +3,17 @@ import asyncio
 import json
 
 from .model_utils import Model, Request
-from .s3_utils import upload_fileobj_to_s3, get_minio_client
+from .s3_utils import upload_fileobj_to_s3, get_minio_client, download_file
 from config import cfg, logger
 
 from .kafka_producer import send_predict
 
 from .photo_utils import add_image_on_background
 
-weights = {"./weights/GAZPROM_lora_blue_orange.safetensors": 0.2,
-           "./weights/GAZPROM_lora.safetensors": 0.6,
-           "./weights/GAZPROM_lora_add_card.safetensors": 0.2}
 
+
+weights = {"/code/weights/GAZPROM_850_photo-000010.safetensors": 0.5,
+           "/code/weights/GAZPROM_lora_blue_orange.safetensors": 0.5}
 
 async def consume():
     """
@@ -34,7 +34,6 @@ async def consume():
         bootstrap_servers='kafka:29091',
         auto_offset_reset='latest'
     )
-
     model = Model(weights=weights)
     req = Request(model)
     await consumer.start()

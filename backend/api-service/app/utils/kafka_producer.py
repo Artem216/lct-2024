@@ -12,7 +12,10 @@ from config import logger
 async def send_task(task_id : int, predict_data : PredictRequest, user_id: int):
     producer = AIOKafkaProducer(bootstrap_servers='kafka:29091')
     await producer.start()
-    
+    if predict_data.product != "":
+        new_product = product_map[predict_data.product]
+    else:
+        new_product = ""
     try:
         task = {
             "id" : task_id,
@@ -21,7 +24,7 @@ async def send_task(task_id : int, predict_data : PredictRequest, user_id: int):
             "width" : predict_data.width,
             "height" : predict_data.height,
             "goal" : predict_data.goal,
-            "product" : product_map[predict_data.product],
+            "product" : new_product,
             "image_type" : predict_data.image_type,
             "colour" : predict_data.colour,
             "use_llm" : predict_data.use_llm

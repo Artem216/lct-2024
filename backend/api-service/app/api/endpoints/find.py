@@ -80,6 +80,21 @@ async def top_pictures(
     theme: str,
     current_user: UserDto = Depends(get_current_user),
 ) -> List[TopCards]:
+    """
+    Получить лучшие карточки по теме.
+
+    Этот эндпоинт позволяет получить список лучших карточек по указанной теме.
+
+    Args:
+        theme (str): Тема для поиска карточек.
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        List[TopCards]: Список лучших карточек по указанной теме.
+
+    Raises:
+        HTTPException: Если произошла ошибка при получении карточек.
+    """
     try:
         logger.info(theme)
         cards = await get_cards_by_theme(theme)

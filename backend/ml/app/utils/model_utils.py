@@ -3,7 +3,7 @@
 import os
 import io
 
-from utils.s3_utils import get_minio_client 
+from utils.s3_utils import get_minio_client
 
 from .lamma_prompts import generate_prompt
 from config import logger
@@ -20,6 +20,8 @@ import numpy as np
 from tqdm.notebook import tqdm
 
 from .lama_dataset import prompt_dataset_pipeline
+
+
 
 class Model:
     def __init__(self, weights, name_model='runwayml/stable-diffusion-v1-5'):
@@ -106,14 +108,13 @@ class Request:
 
         # product and prompt
         elif prompt and product and (not dataset):
-            if use_llm:
-                prompt_category = [generate_prompt(product)]
-            else:
-                prompt_category = self.categories_prompts[product]
-                prompt_category = list(np.random.choice(prompt_category, 5 // 2))
-            prompt_user = [prompt for i in range(5 - 5//2)]
-            self.user_prompt = [prompt_category[0] + ", " +  prompt_user[0]]
-            np.random.shuffle(self.user_prompt)
+            # if use_llm:
+            #     prompt_category = [generate_prompt(product)]
+            # else:
+            #     prompt_category = self.categories_prompts[product]
+            #     prompt_category = list(np.random.choice(prompt_category, 5 // 2))
+            # prompt_user = [prompt for i in range(5 - 5//2)]
+            self.user_prompt = [prompt]
             logger.info(self.user_prompt)
         elif dataset:
             self.user_prompt = [prompt_dataset_pipeline(dataset)]

@@ -20,6 +20,20 @@ router = APIRouter(prefix="", tags=["admin"])
 async def find_all(
     current_user: UserDto = Depends(get_current_user),
 ) -> List[AllUser]:
+    """
+    Получить список всех пользователей.
+
+    Этот эндпоинт позволяет администратору получить список всех пользователей в системе.
+
+    Args:
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        List[AllUser]: Список всех пользователей.
+
+    Raises:
+        HTTPException: Если текущий пользователь не администратор или если произошла ошибка при получении данных.
+    """
     if current_user.is_admin:
         try:
             res = await get_all_users(current_user.id)
@@ -36,6 +50,21 @@ async def raise_user_(
     user_id : int,
     current_user: UserDto = Depends(get_current_user),
 ) -> UserDto:
+    """
+    Повысить пользователя до более высокой роли.
+
+    Этот эндпоинт позволяет администратору повысить другого пользователя до более высокой роли.
+
+    Args:
+        user_id (int): Идентификатор пользователя, которого нужно повысить.
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        UserDto: Обновленная информация о пользователе.
+
+    Raises:
+        HTTPException: Если текущий пользователь не администратор, если пользователя нельзя повысить или если произошла ошибка при повышении.
+    """
     if current_user.is_admin:
         try:
             res = await raise_user(user_id)
@@ -51,6 +80,21 @@ async def delete_user_(
     user_id : int,
     current_user: UserDto = Depends(get_current_user),
 ) -> UserDto:
+    """
+    Удалить пользователя.
+
+    Этот эндпоинт позволяет администратору удалить другого пользователя из системы.
+
+    Args:
+        user_id (int): Идентификатор пользователя, которого нужно удалить.
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        UserDto: Информация об удаленном пользователе.
+
+    Raises:
+        HTTPException: Если текущий пользователь не администратор, если пользователя нельзя удалить или если произошла ошибка при удалении.
+    """
     if current_user.is_admin:
     
         try:
@@ -75,6 +119,20 @@ async def delete_user_(
 async def user_registration_graphic(
     current_user: UserDto = Depends(get_current_user),
 ) -> UserGraphic:
+    """
+    Получить статистику регистрации пользователей.
+
+    Этот эндпоинт позволяет администратору получить статистику по регистрациям пользователей.
+
+    Args:
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        UserGraphic: Статистика регистрации пользователей.
+
+    Raises:
+        HTTPException: Если текущий пользователь не администратор или если произошла ошибка при получении данных.
+    """
     if current_user.is_admin:
         try:
             res = await user_graphic()
@@ -90,6 +148,20 @@ async def user_registration_graphic(
 async def user_cards_graphic(
     current_user: UserDto = Depends(get_current_user),
 ) -> UserGraphic:
+    """
+    Получить статистику по картам пользователей.
+
+    Этот эндпоинт позволяет администратору получить статистику по картам пользователей.
+
+    Args:
+        current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
+
+    Returns:
+        UserGraphic: Статистика по картам пользователей.
+
+    Raises:
+        HTTPException: Если текущий пользователь не администратор или если произошла ошибка при получении данных.
+    """
     if current_user.is_admin:
         try:
             res = await res_graphic()

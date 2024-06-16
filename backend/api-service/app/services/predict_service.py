@@ -44,14 +44,17 @@ async def add_request(user_id : int, predict_data : PredictRequest | PredictRequ
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING id;
     """
-
+    if predict_data.product != "":
+        new_product = product_map[predict_data.product]
+    else:
+        new_product = ""
     features_record = await db.fetchrow(qwery_features, 
                                         predict_data.prompt, 
                                         predict_data.height, 
                                         predict_data.width, 
                                         predict_data.goal,
                                         "",
-                                        product_map[predict_data.product],
+                                        new_product,
                                         predict_data.image_type,
                                         predict_data.colour )
 
