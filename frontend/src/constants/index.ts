@@ -193,7 +193,9 @@ export const imageTypeValues: IConstant[] = [
     { 'nbo': 'NBO' },
 ]
 
-export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0"]
+export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0", "#FD7E0B", "#85B6F6", "#D8DFFF", "#C4E7FF", 
+    "#9892F5", "#00AEE7"
+]
 
 
 export const productCategoryMap = {

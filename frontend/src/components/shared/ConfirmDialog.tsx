@@ -28,7 +28,7 @@ const ConfirmDialog = ({ open, title, description, onConfirm, onCancel }: Confir
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}> Отменить</Button>
-          <Button variant="destructive" onClick={onConfirm}>Подтвердить</Button>
+          <Button variant="default" className="shad-button_secondary px-5" onClick={onConfirm}>Подтвердить</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

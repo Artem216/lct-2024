@@ -16,6 +16,7 @@ interface IGenerate {
     product: string;
     image_type: string;
     colour: string;
+    use_llm: boolean;
 }
 
 // // userImage

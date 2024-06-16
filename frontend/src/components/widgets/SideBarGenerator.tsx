@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import ApiImage from "@/services/apiImage"
 import { useGeneratorImages } from "@/context/GeneratorImagesContext"
 import { getRandomString, validatePromptForTags } from "@/lib/utils"
+import ConfirmDialog from "../shared/ConfirmDialog"
 
 type CheckedState = boolean | 'indeterminate';
 
@@ -33,6 +34,7 @@ const SideBarGenerator = () => {
     const [checkPrompt, setCheckPrompt] = useState<CheckedState>(false);
     const [checkColor, setCheckColor] = useState<CheckedState>(false);
     const [checkLLM, setCheckLLM] = useState<CheckedState>(false);
+    const [openConfirmLLMDialog, setOpenConfirmDialog] = useState(false);
 
     const { setIsStartGeneration, setImgHeight, setImgWidth,
         setImgNumber, setGeneratedImages
@@ -93,6 +95,12 @@ const SideBarGenerator = () => {
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
+        let useLLM = false;
+        if (checkLLM && !openConfirmLLMDialog) {
+            useLLM = true;
+            setOpenConfirmDialog(true);
+            return;
+        }
         try {
             const response = await ApiImage.generate({
                 n_variants: data.imageNumber,
@@ -100,14 +108,10 @@ const SideBarGenerator = () => {
                 width: data.width,
                 height: data.height,
                 goal: data.channel,
-                tags: [
-                    {
-                        "tag": "",
-                    }
-                ],
                 product: data.product,
                 image_type: data.imageType,
-                colour: data.color
+                colour: data.color,
+                use_llm: useLLM,
 
             })
             form.reset();
@@ -129,6 +133,21 @@ const SideBarGenerator = () => {
     useEffect(() => {
         setLengthSymbols(promptValue?.length || 0);
     }, [promptValue]);
+
+    function cancelDialogLLM(){
+        setOpenConfirmDialog(false);
+        setCheckLLM(false);
+    }
+
+    async function confirmDialogLLM(){
+        setOpenConfirmDialog(false);
+        const isValid = await form.trigger();
+
+        if (isValid) {
+            const formData = form.getValues();
+            await onSubmit(formData);
+        }
+    }
 
     return (
         <div className="bg-primary-500/10 w-[400px] absolute top-[60px] left-0 rounded-[20px]"
@@ -189,7 +208,7 @@ const SideBarGenerator = () => {
                                         />
                                         <div className="flex items-center text-black justify-between">
                                             <p className="text-[10px] text-left text-black">
-                                                Пример: монеты, большой дом, подарок
+                                                Пример: монеты, большой дом, автомобиль
                                             </p>
                                             <p>
                                                 {lengthSymbols}/{maxLengthSymbols}
@@ -368,7 +387,13 @@ const SideBarGenerator = () => {
                     </Button>
                 </form>
             </Form>
-
+            <ConfirmDialog
+                open={openConfirmLLMDialog}
+                title={'Использовать LLM для генерации промпта'}
+                description={'Обратите внимание, время на генерацию картинки немного увеличится, так как сначала применится LLM. Применить LLM?'}
+                onConfirm={confirmDialogLLM}
+                onCancel={cancelDialogLLM}
+            />
         </div>
     )
 }
