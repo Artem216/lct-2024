@@ -14,16 +14,13 @@ const MyImagesWidget = () => {
   const downloadImages = async () => {
     const zip = new JSZip();
 
-    // Загрузите каждое изображение и добавьте его в zip-архив
     const imagePromises = myCards.map(async (card, index) => {
       const response = await axios.get(card.parent_s3_url, { responseType: 'blob' });
       zip.file(`Изображение${index + 1}.jpg`, response.data);
     });
 
-    // Дождитесь загрузки всех изображений
     await Promise.all(imagePromises);
 
-    // Создайте zip-архив и загрузите его
     const content = await zip.generateAsync({ type: 'blob' });
     saveAs(content, 'Сгенерированные_изображения.zip');
   };
