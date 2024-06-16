@@ -41,7 +41,7 @@ async def signup(
     try:
         signup_data.password = get_password_hash(signup_data.password)
         user = await add_user(signup_data)
-        return AccessToken(access_token=create_access_jwt(user.id))
+        return AccessToken(access_token=create_access_jwt(user.id), is_admin= user.is_admin)
     
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

@@ -5,6 +5,7 @@ import io
 
 from utils.s3_utils import get_minio_client 
 
+from .lamma_prompts import generate_prompt
 from config import logger
 
 # from .translation_utils import translator_translate
@@ -18,22 +19,32 @@ from rembg import remove
 import numpy as np
 from tqdm.notebook import tqdm
 
+from .lama_dataset import prompt_dataset_pipeline
 
 class Model:
-    def __init__(self,
-                 weights,
-                 name_model='runwayml/stable-diffusion-v1-5'):
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        pipe = StableDiffusionPipeline.from_pretrained(name_model).to(device)
-        # , torch_dtype=torch.float16
-        pipe.safety_checker = None
-        pipe.requires_safety_checker = False
+    def __init__(self, weights, name_model='runwayml/stable-diffusion-v1-5'):
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.name_model = name_model
+        self.load_model(weights)
+    
+    def load_model(self, weights):
+        self.pipe = StableDiffusionPipeline.from_pretrained(self.name_model).to(self.device)
+        # torch_dtype=torch.float16
+        self.pipe.safety_checker = None
+        self.pipe.requires_safety_checker = False
         
+        self.clear_adapters()
+
         for i, path_weights in enumerate(weights.keys()):
-            pipe.load_lora_weights(path_weights, adapter_name=f'{i}')
+            self.pipe.load_lora_weights(path_weights, adapter_name=f'{i}')
             
-        pipe.set_adapters([f'{i}' for i in range(len(weights))], adapter_weights=list(weights.values()))
-        self.model = pipe
+        # Set new adapters and weights
+        self.pipe.set_adapters([f'{i}' for i in range(len(weights))], adapter_weights=list(weights.values()))
+        self.model = self.pipe
+        
+    def clear_adapters(self):
+        if hasattr(self.pipe, 'adapter_manager'):
+            self.pipe.adapter_manager.clear_adapters()
     
     
     def translator(self, prompt):
@@ -42,9 +53,8 @@ class Model:
         return result
     
     def remove_bg(self, img):
-        return remove(img, post_process_mask=True)
+        return remove(img)
         
-
     def save_image_to_bytes(self, image):
         """Сохраняет изображение в байтовый поток."""
         
@@ -53,67 +63,70 @@ class Model:
         byte_io.seek(0)
         return byte_io
 
-
+    
     def get_image(self,
                   prompt,
-                  lora_level=0.5,
-                  num_inference_steps=10, 
-                  guidance_scale=3):  
-                #   num_inference_steps=50, 
-                #   guidance_scale=3):
-        logger.info("We in generation")
-        prompt = self.translator(prompt)
-        prompt = 'GAZPROMBANK,' + ','.join([obj.strip() for obj in prompt.split(',')]) + \
-                 ',isometric,claymorphism,3d render,icon,web icon,clean background,3d figure,minimalistic,simple' + \
-                 f'<lora:GAZPROMBANK:{lora_level}>'
+                  negative_prompt=None):
+        
+        prompt_new = self.translator(prompt)
+        prompt_ = ','.join([obj.strip() for obj in prompt_new.split(',')]) +',isometric,claymorphism,3d render,icon,web icon'
+        negative_prompt='pig, wool, draw, noise, real, text, number, picture, texture, detail'
         with torch.no_grad():
-            img = self.model(prompt, 
-                             num_inference_steps=num_inference_steps,
-                             guidance_scale=guidance_scale).images[0]
-        logger.info("We generate")
-        image_without_bg = self.remove_bg(img) 
-
-        return self.save_image_to_bytes(image_without_bg)
-
+            img = self.model(prompt_, 
+                             negative_prompt=negative_prompt, num_inference_steps=10).images[0]
+        rm_img = self.remove_bg(img)
+        return self.save_image_to_bytes(rm_img), prompt_new
 
 class Request:
     def __init__(self, model):
         self.model = model
+        self.user_prompt = ""
         
     def create_imgs(self,
                     n=1,
                     prompt=None,
                     channel=None,
                     product=None, 
-                    dataset=None):
+                    dataset=None,
+                    use_llm=None):
         # only prompt
         if prompt and (not product) and (not dataset):
-            new_propmt = [prompt for i in range(n)]
-            logger.info(new_propmt)
+            self.user_prompt = [prompt for i in range(n)]
+            logger.info(self.user_prompt)
 
         # only product
         elif product and (not prompt) and (not dataset):
-            prompt_category = self.categories_prompts[product]
-            new_propmt = np.random.choice(prompt_category, n)
-            logger.info(new_propmt)
+            if use_llm:
+                self.user_prompt = [generate_prompt(product)]
+                logger.info(self.user_prompt)
+            else:
+                prompt_category = self.categories_prompts[product]
+                self.user_prompt = np.random.choice(prompt_category, n)
+                logger.info(self.user_prompt)
 
         # product and prompt
         elif prompt and product and (not dataset):
-            prompt_category = self.categories_prompts[product]
-            prompt_category = list(np.random.choice(prompt_category, n // 2))
-            prompt_user = [prompt for i in range(n - n//2)]
-            new_propmt = prompt_category + prompt_user
-            np.random.shuffle(new_propmt)
-            logger.info(new_propmt)
+            if use_llm:
+                prompt_category = [generate_prompt(product)]
+            else:
+                prompt_category = self.categories_prompts[product]
+                prompt_category = list(np.random.choice(prompt_category, 5 // 2))
+            prompt_user = [prompt for i in range(5 - 5//2)]
+            self.user_prompt = [prompt_category[0] + ", " +  prompt_user[0]]
+            np.random.shuffle(self.user_prompt)
+            logger.info(self.user_prompt)
+        elif dataset:
+            self.user_prompt = [prompt_dataset_pipeline(dataset)]
+            logger.info(self.user_prompt)
+
         # only prompt
         else:
-            new_propmt = [prompt for i in range(n)]
-            logger.info(new_propmt)
-
-        return self.model.get_image(new_propmt[0])
+            self.user_prompt = [prompt for i in range(n)]
+            logger.info(self.user_prompt)
+        return self.model.get_image(self.user_prompt[0])
             
     categories_prompts = {
-        'Обмен валюты': ['dollar,dollar bill,arrow,coin,rubble,exchange,currency exchange',
+        'currency_exchange': ['dollar,dollar bill,arrow,coin,rubble,exchange,currency exchange',
                          'ATM machine,blue,dollar,coin,gold goin,exchange,currency exchange',
                          'dollar,euro,ruble,currency notes from different countries,exchange',
                          'currency exchange,rasing chart,upwise trend,orange line,exchange rate,banknote',
@@ -125,7 +138,7 @@ class Request:
                          'coin,banknote,exchange,currency exchange,profitable,chart,increasing trend,percentage sign,green line',
                          'different currencies, banknotes, calculator, dynamic exchange rate figures,currency exchange, exchange'],
     
-        'Кредит': ['stack,stack of coins,stack of bills,credit,profitably,loan,loan approval',
+        'credit': ['stack,stack of coins,stack of bills,credit,profitably,loan,loan approval',
                    'handshake,contract,beneficial,bills,loan,loan approval',
                    'green confirmation check mark,loan,loan approval,bundle of bills,banknotes',
                    'contract,confirmation tick,handshake,loan,loan approval,bag of money',
@@ -137,7 +150,7 @@ class Request:
                    'new year,gift box,red box,white ribbon bow,Santa claus hat,snow,snowdrifts',
                    'new year,gift box,blue box,Christmas tree,snow,snowdrifts'],
     
-        'Карта': ['card,gazprombank logo,mobile phone,smartphone,black phone',
+        'card': ['card,gazprombank logo,mobile phone,smartphone,black phone',
                   'card,gazprombank logo,white smartphone,open screen,blue screen',
                   'credit card,gazprombank logo,gazpromcard,percent,percent sign,profitably,card',
                   'credit card,gazprombank logo,gift box,blue box,Christmas tree,snow,snowdrifts',
@@ -148,8 +161,7 @@ class Request:
                   'cards,two cards,silver,gold,silver chip,proection, 3D',
                   'card,payment,terminal,ATM machine,black,while,silver',
                   'card,payment,terminal,contactless payment,online payment,attach the card to the terminal'],
-
-        'Счета_вклады': ['safe,safety,safe locker,gold,gold coins',
+        'accounts_deposits': ['safe,safety,safe locker,gold,gold coins',
                          'safe,safety,safe locker,silver,silver coins',
                          'safe,safety,safe locker,pack of banknotes,blue,money,bills',
                          'bank,money,bank building,coin,banknote,blue,white,light blue,orange',
@@ -160,7 +172,7 @@ class Request:
                          'blue shield,banknotes,money',
                          'silver shield,banknotes,money'],
 
-        'Ипотека': ['house,river,tree,windows,stairs,blue sky,white house',
+        'mortgage': ['house,river,tree,windows,stairs,blue sky,white house',
                     'sun,white house,without doors,without windows,lightnings,confetti',
                     'grey house key,gift,red ribbow bow',
                     'grey house key,gift,red ribbow bow,confetti',
@@ -170,7 +182,7 @@ class Request:
                     'house,roof,ribbon bow,gift',
                     'orange house,blue roof,white ribbon bow'],
 
-        'Автокредит': ['blue car,percent sign,red ribbon bow',
+        'autocredit': ['blue car,percent sign,red ribbon bow',
                        'two cars,confetti,gift,red,blue,silver',
                        'two cars,confetti,gift,orange,blue,gold',
                        'three cars,three,percent sign,percent,orange,black,white,blue,light blue',
@@ -181,7 +193,7 @@ class Request:
                        'black steering wheel,blue percent sign,profitably',
                        'car,percent sign'],
 
-        'Страхованиe': ['two shields,shield,blue shield,orange shield',
+        'insurance': ['two shields,shield,blue shield,orange shield',
                         'safe,safety,two hands,promise, care, hand,hands in the begging pose',
                         'protection, protective sign,shield,blue',
                         'shiled,silver shield,car,protection',
@@ -191,52 +203,3 @@ class Request:
                         'shield,money,coin,banknotes,bills',
                         'locker,shield,safety,protection,blue,light blue,orange,white']
     }
-
-# def load_model():
-#     """Загружает модель из локального файла или MinIO."""
-
-#     pipeline = DiffusionPipeline.from_pretrained("nota-ai/bk-sdm-small")
-#     # pipeline.to("cuda")
-#     path_to_lora = "/"
-
-#     # pipeline.load_lora_weights(path_to_lora)
-
-#     logger.info("Model loaded successfully")
-    
-#     return pipeline
-
-
-# def predict(pipe, prompt: str, goal: str, tags: str):
-#     """Делает предсказание на основе входных данных с использованием модели."""
-
-#     pipe.scheduler = DPMSolverSinglestepScheduler.from_config(pipe.scheduler.config, timestep_spacing="trailing")
-
-#     main_eng_prompt = prompt
-
-#     goal_prompt = goal
-
-#     tags_prompt = tags
-
-#     prompt = f"GAZPROMBANK,isometric,claymorphism,3d render,icon,web icon,clean background,3d figure,minimalistic,simple,<lora:GAZPROMBANK:0.5>,{main_eng_prompt}"
-#     negative_prompt = "pattern, clone, (lineart, contour, black lines), (texture, noise), (floating small parts), [ deformed | disfigured ], poorly drawn, blurry, (flatten, flat, vector), low resolution, defocus, cropped, creature, humanoid, person, (multiply objects), text"
-#     images = pipe(prompt = prompt, num_inference_steps = 1).images[0]
-    
-#     return save_image_to_bytes(images)
-
-# def save_image_to_bytes(image):
-#     """Сохраняет изображение в байтовый поток."""
-    
-#     byte_io = io.BytesIO()
-#     image.save(byte_io, format='PNG')
-#     byte_io.seek(0)
-#     return byte_io
-
-
-# def preprocess_input(input_data):
-#     """Преобразует входные данные в нужный формат для модели."""
-#     pass
-
-
-# def postprocess_output(output_data):
-#     """Преобразует вывод модели в нужный формат для дальнейшего использования."""
-#     pass

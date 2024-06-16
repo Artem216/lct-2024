@@ -17,6 +17,7 @@ async def chng_rating(
     response: Response,
     response_id: int,
     change: str,
+    current_user: UserDto = Depends(get_current_user)
 ) -> None:
     """
     Изменение рейтинга фотографии.

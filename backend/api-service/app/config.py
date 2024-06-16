@@ -18,7 +18,7 @@ class Config(BaseSettings):
     def dsn(self) -> str:
         return f"postgres://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
     
-    access_token_expire_minutes: int = 15
+    access_token_expire_minutes: int = 60
     secret_key: str = "6934545212a83b8135a67477483ff734fe7b1c185f7abc940ad8cebd6388cfa0"
     algorithm: str = "HS256"
 

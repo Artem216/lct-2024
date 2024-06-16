@@ -1,6 +1,5 @@
 import asyncio
 import logging
-# from grpc_server import serve
 
 from utils.kafka_consumer import consume
 

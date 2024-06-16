@@ -3,6 +3,7 @@ from api.endpoints import auth
 from api.endpoints import predict
 from api.endpoints import find
 from api.endpoints import rating
+from api.endpoints import admin
 from contextlib import asynccontextmanager
 from db.database import db
 
@@ -63,3 +64,4 @@ app.include_router(auth.router)
 app.include_router(predict.router, prefix="/api/v1")
 app.include_router(find.router, prefix="/api/v1")
 app.include_router(rating.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")

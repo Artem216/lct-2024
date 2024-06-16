@@ -17,22 +17,23 @@ async def change_rating(response_id : int, chng: str):
     db = await get_connection()
     
     if chng == "add":
+        
         qwery= """
         UPDATE response
         SET rating = rating + 1
         WHERE id = $1
-        RETURNING s3_url, rating, fk_user;
+        RETURNING fk_user;
         """
 
         record = await db.fetchrow(qwery, response_id)
 
-        qwery_2 = """
-        SELECT name
-        FROM users
-        WHERE id = $1
-        """
+        # qwery_2 = """
+        # SELECT name
+        # FROM users
+        # WHERE id = $1
+        # """
 
-        record_2 = await db.fetchrow(qwery_2, record['fk_user'])
+        # record_2 = await db.fetchrow(qwery_2, record['fk_user'])
 
     if chng == "delete":
         

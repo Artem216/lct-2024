@@ -8,6 +8,7 @@ from schemas.user_schemas import UserDto
 
 class AddResponse(BaseModel):
     id: int
+    is_admin: bool
 
 class GetUserResponse(BaseModel):
     id: int
@@ -31,9 +32,9 @@ async def add_user(signup_data: Signup) -> AddResponse:
     db = await get_connection()
     
     query = """
-    INSERT INTO users (email, password, name, is_admin)
-    VALUES ($1, $2, $3, false)
-    RETURNING id;
+    INSERT INTO users (email, password, name, is_admin, is_delete)
+    VALUES ($1, $2, $3, false, false)
+    RETURNING id, is_admin;
     """
     record = await db.fetchrow(query, signup_data.email, signup_data.password, signup_data.name)
 

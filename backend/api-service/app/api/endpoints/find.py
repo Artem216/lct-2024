@@ -5,7 +5,7 @@ from schemas.find_schemas import AllCards, TopCards
 
 from db.dependencies import get_current_user
 
-from services.find_service import get_all_cards, get_top_cards
+from services.find_service import get_all_cards, get_top_cards, get_cards_by_theme
 
 from typing import List
 
@@ -75,3 +75,16 @@ async def top_pictures(
 
 
 
+@router.get("/cards/{theme}", response_model=List[TopCards], status_code=status.HTTP_200_OK)
+async def top_pictures(
+    theme: str,
+    current_user: UserDto = Depends(get_current_user),
+) -> List[TopCards]:
+    try:
+        logger.info(theme)
+        cards = await get_cards_by_theme(theme)
+        
+        return cards
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

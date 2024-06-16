@@ -5,28 +5,28 @@ from typing import List
 
 
 product_map = {
-    "ПК" : "Кредит",
-    "TOPUP" : "Кредит",
-    "REFIN" : "Кредит",
-    "CC" : "Кредит",
-    "AUTO_SCR" : "Кредит",
-    "MORTG_SCR" : "Кредит",
-    "AUTO" : "Автокредит",
-    "MORTG" : "Ипотека",
-    "MORTG_REFI" : "Ипотека",
-    "DEPOSIT" : "Счета_вклады",
-    "SAVE_ACC" : "Счета_вклады",
-    "INVEST" : "Счета_вклады",
-    "TRUST" : "Счета_вклады",
-    "OMS" : "Счета_вклады",
-    "IZP" : "Карта",
-    "DC" : "Карта",
-    "PREMIUM" : "Карта",
-    "ISG" : "Страхованиe",
-    "NSG" : "Страхованиe",
-    "INS_LIFE" : "Страхованиe",
-    "INS_PROPERTY": "Страхованиe",
-    "CURR_EXC" : "Обмен валюты"
+    "ПК" : "credit",
+    "TOPUP" : "credit",
+    "REFIN" : "credit",
+    "CC" : "credit",
+    "AUTO_SCR" : "credit",
+    "MORTG_SCR" : "credit",
+    "AUTO" : "autocredit",
+    "MORTG" : "mortgage",
+    "MORTG_REFI" : "mortgage",
+    "DEPOSIT" : "accounts_deposits",
+    "SAVE_ACC" : "accounts_deposits",
+    "INVEST" : "accounts_deposits",
+    "TRUST" : "accounts_deposits",
+    "OMS" : "accounts_deposits",
+    "IZP" : "card",
+    "DC" : "card",
+    "PREMIUM" : "card",
+    "ISG" : "insurance",
+    "NSG" : "insurance",
+    "INS_LIFE" : "insurance",
+    "INS_PROPERTY": "insurance",
+    "CURR_EXC" : "currency_exchange"
 } 
 
 
@@ -51,10 +51,10 @@ class PredictRequest(BaseModel):
     width: int
     height: int
     goal: str
-    tags: List[PromptTags]
     product: str
     image_type: str
     colour: str
+    use_llm : bool
 
 
 
@@ -70,4 +70,20 @@ class PredictData(BaseModel):
     parent_s3_url: str
     x : int
     y : int
+    child_w: int
+    child_h : int
+    colour : str
     rating : int
+
+class PredictRequestFile(BaseModel):
+    n_variants: int = Field(1, ge=1, le=10)
+    prompt: str
+    width: int
+    height: int
+    goal: str
+    product: str
+    image_type: str
+    colour: str
+    id_user_from_csv: int
+    cluster_name : str
+    use_llm : bool

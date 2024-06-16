@@ -7,7 +7,15 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-async def send_predict(task_id : int, status: str, child_s3_url : str, parent_s3_url: str , user_id : int, coordinates : set):
+async def send_predict(task_id : int, 
+                       status: str, 
+                       child_s3_url : str, 
+                       parent_s3_url: str , 
+                       user_id : int, 
+                       coordinates : set, 
+                       new_child_size: set, 
+                       colour: str,
+                       prompt : str):
     """
     Отправка информации о завершенном задании в Kafka.
 
@@ -30,6 +38,10 @@ async def send_predict(task_id : int, status: str, child_s3_url : str, parent_s3
             "parent_s3_url" : parent_s3_url,
             "x" : coordinates[0],
             "y" : coordinates[1],
+            "child_w" : new_child_size[0],
+            "child_h" : new_child_size[1],
+            "colour" : colour,
+            "prompt" : prompt,
             "status" : status
             }
         logger.info(f"Sending task to Kafka: {task}")

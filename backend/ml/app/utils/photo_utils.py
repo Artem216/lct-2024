@@ -11,6 +11,8 @@ def add_image_on_background(foreground_bytes : io.BytesIO , background_color : s
 
         x = (width - foreground.width) // 2
         y = (height - foreground.height) // 2
+        child_w = foreground.width
+        child_h = foreground.height
     elif position_mode == 'ghost':
 
         # Изменяем размер изображения, чтобы оно соответствовало высоте фона
@@ -18,6 +20,8 @@ def add_image_on_background(foreground_bytes : io.BytesIO , background_color : s
         x = width - new_foreground.width
         y = 0
         foreground = new_foreground
+        child_w = foreground.width
+        child_h = foreground.height
     elif position_mode == 'nbo':
 
         # Изменяем размер изображения, чтобы оно соответствовало половине высоты фона
@@ -25,6 +29,8 @@ def add_image_on_background(foreground_bytes : io.BytesIO , background_color : s
         x = width - new_foreground.width
         y = (height - new_foreground.height) // 2
         foreground = new_foreground
+        child_w = foreground.width
+        child_h = foreground.height
     else:
         raise ValueError("Invalid position_mode. Choose from 'center', 'right_full_height', 'right_half_height'.")
     
@@ -34,7 +40,7 @@ def add_image_on_background(foreground_bytes : io.BytesIO , background_color : s
     background.save(output_bytes, 'PNG')
     output_bytes.seek(0)
     
-    return output_bytes, (x, y)
+    return output_bytes, (x, y), (child_w, child_h)
 
 
 if __name__ == "__main__":

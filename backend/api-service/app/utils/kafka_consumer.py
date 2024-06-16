@@ -23,11 +23,24 @@ async def consume(consumer: AIOKafkaConsumer):
             x = task['x']
             y = task['y']
             status = task['status']
+            child_w = task['child_w']
+            child_h = task['child_h']
+            user_id = task['user_id']
+            colour= task['colour'] 
+            prompt = task['prompt']
 
-            user_id = task['user_id'] 
 
-
-            res = await add_response(task_id, child_s3_url, parent_s3_url, x, y, user_id)
+            res = await add_response(task_id, 
+                                     child_s3_url, 
+                                     parent_s3_url, 
+                                     x, 
+                                     y, 
+                                     user_id, 
+                                     child_w, 
+                                     child_h, 
+                                     colour,
+                                     prompt
+                                     )
 
     except Exception as ex:
         logger.info(ex)

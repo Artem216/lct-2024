@@ -61,3 +61,4 @@ peft
 rembg
 matplotlib
 pillow
+pandas

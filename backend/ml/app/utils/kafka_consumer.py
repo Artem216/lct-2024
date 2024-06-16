@@ -53,19 +53,20 @@ async def consume():
             height = task['height']
             goal = task['goal']
             # TODO: придумать что делать с тегами.
-            tags = task['tags'] 
 
-
+            use_llm = task['use_llm']
             logger.info(f"Received task status from Kafka: {task_id}")
-            
 
-            img = req.create_imgs(n=1 ,prompt=prompt, product=product)
+            if 'file' in task.keys():
+                img, new_prompt= req.create_imgs(n=1 , dataset= task['file'], use_llm= use_llm)
+            else:
+                img, new_prompt = req.create_imgs(n=1 ,prompt=prompt, product=product, use_llm= use_llm)
             
             bucket_name = cfg.bucket_name_1
             object_name = f"output_image{task_id}.png"
             child_url = upload_fileobj_to_s3(img, bucket_name, object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
             
-            parent_img, coordinates = add_image_on_background(
+            parent_img, coordinates, new_child_size = add_image_on_background(
                 foreground_bytes = img,
                 background_color = colour,
                 position_mode = image_type,
@@ -77,7 +78,10 @@ async def consume():
 
             parent_bucket_name = cfg.bucket_name_2
             parent_object_name = f"parent_output_image{task_id}.png"
-            parent_url = upload_fileobj_to_s3(parent_img, parent_bucket_name, parent_object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
+            parent_url = upload_fileobj_to_s3(parent_img, 
+                                              parent_bucket_name, 
+                                              parent_object_name, 
+                                              client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))
  
 
             await send_predict(task_id= task_id, 
@@ -85,7 +89,10 @@ async def consume():
                                child_s3_url=child_url, 
                                parent_s3_url= parent_url, 
                                user_id= user_id, 
-                               coordinates= coordinates
+                               coordinates= coordinates,
+                               new_child_size=new_child_size,
+                               colour = colour,
+                               prompt= new_prompt
                                )
     finally:
         await consumer.stop()
