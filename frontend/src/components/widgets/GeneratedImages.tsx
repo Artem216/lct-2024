@@ -11,8 +11,9 @@ const GeneratedImages = () => {
         <>
             <div className="p-10 bg-light-1 rounded-2xl my-10"
                 style={{ maxWidth: `calc(100% - ${leftSideBarWidth}px)`, marginLeft: `${leftSideBarWidth}px` }}>
-                {isStartGeneration ?
-                    (<>
+
+                <>
+                    {generatedImages &&
                         <div className="flex justify-between mx-5 flex-wrap gap-5">
                             {generatedImages.map((image) => {
                                 console.log(image)
@@ -27,14 +28,15 @@ const GeneratedImages = () => {
                                     />
                                 )
                             })}
-                        </div>
-                    </>) :
-                    (
+                        </div>}
+
+                </>
+                <>
+                    {!isStartGeneration &&
                         <FileUploader />
-                    )
+                    }
+                </>
 
-
-                }
 
             </div>
 

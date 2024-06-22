@@ -110,7 +110,7 @@ const SideBarGenerator = () => {
                     product: data.product,
                     image_type: data.imageType,
                     colour: data.color,
-                    use_llm: false,
+                    use_llm: checkLLM,
                     id_user_from_csv: Number(currentId),
                     cluster_name: currentClust,
                 }, file)
@@ -120,6 +120,9 @@ const SideBarGenerator = () => {
                 setImgWidth(Number(data.width));
                 setImgNumber(Number(data.imageNumber));
                 setGeneratedImages(response);
+                setCheckPrompt(false);
+                setCheckColor(false);
+                setCheckLLM(false);
             }
             catch (error) {
                 return toast({
@@ -142,7 +145,7 @@ const SideBarGenerator = () => {
                     product: data.product,
                     image_type: data.imageType,
                     colour: data.color,
-                    use_llm: useLLM,
+                    use_llm: checkLLM,
 
                 })
                 form.reset();
@@ -151,6 +154,9 @@ const SideBarGenerator = () => {
                 setImgWidth(Number(data.width));
                 setImgNumber(Number(data.imageNumber));
                 setGeneratedImages(response);
+                setCheckPrompt(false);
+                setCheckColor(false);
+                setCheckLLM(false);
             }
             catch (error) {
                 return toast({
@@ -177,6 +183,7 @@ const SideBarGenerator = () => {
 
         if (isValid) {
             const formData = form.getValues();
+            setCheckLLM(true);
             await onSubmit(formData);
         }
     }
@@ -446,13 +453,16 @@ const SideBarGenerator = () => {
                                     Сгенерировать
                                 </Button>
                             </div>
+                            <p className="base-regular md:base-regular text-center text-black m-2 mt-5">
+                            Перед новой генерацией, пожалуйста, перезагрузите страничку
+                            </p>
                         </div>
                     </form>
                 </Form>
                 <ConfirmDialog
                     open={openConfirmLLMDialog}
                     title={'Использовать LLM для генерации промпта'}
-                    description={'Обратите внимание, время на генерацию картинки немного увеличится, так как сначала применится LLM. Применить LLM?'}
+                    description={'Обратите внимание, время на генерацию картинки увеличится (примерно на 2 минуты), так как сначала применится LLM. Применить LLM?'}
                     onConfirm={confirmDialogLLM}
                     onCancel={cancelDialogLLM}
                 />

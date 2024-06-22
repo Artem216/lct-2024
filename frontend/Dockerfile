@@ -1,4 +1,4 @@
-FROM node
+FROM node:20-alpine
 
 WORKDIR /front
 
@@ -6,7 +6,7 @@ COPY package.json .
 
 EXPOSE 3000
 
-RUN npm i 
+RUN npm --proxy http://35.185.196.38:3128 install  --legacy-peer-deps
 
 COPY . .
 

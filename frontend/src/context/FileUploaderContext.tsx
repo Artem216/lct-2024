@@ -1,5 +1,7 @@
 import React, { createContext, useContext, ReactNode, useState, ChangeEvent } from 'react';
 
+import { useToast } from '@/components/ui/use-toast';
+
 interface FileUploaderContextProps {
     currentClust: string;
     setCurrentClust: React.Dispatch<React.SetStateAction<string>>;
@@ -20,8 +22,16 @@ const FileUploaderProvider = ({ children }: { children: ReactNode }) => {
     const [file, setFile] = useState<File | null>(null);
     // const [addFile, setAddFile] = useState<boolean>(false);
 
+    const { toast } = useToast();
     const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
+        if (file && file.type !== 'text/csv') {
+            console.error('The uploaded file is not a CSV file.');
+            return toast({
+                title: "Загрузите файл .csv",
+                variant: "destructive",
+            })
+        }
         setFile(file);
     }
 

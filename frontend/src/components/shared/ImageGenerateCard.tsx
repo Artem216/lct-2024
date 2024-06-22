@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import ApiImage from '@/services/apiImage';
 import { IRating } from '@/services/apiImage';
 
+import { useAllImages } from "@/context/AllImagesContext";
+
 interface ImageCardProps {
     imgSrc: string;
     status: string;
@@ -20,10 +22,12 @@ interface ImageCardProps {
 const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: ImageCardProps) => {
     const { toast } = useToast();
     const navigate = useNavigate();
+    const { setTopAllCards } = useAllImages();
 
-    function goToConstructor() {
-        let imageType = "my";
+    async function goToConstructor() {
+        let imageType = "gen";
         console.log('imgId', imgId)
+        await fetchTopAllCards(999999);
         navigate(`/editor/${imageType}/${imgId}`);
     }
 
@@ -35,6 +39,16 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: Image
                 title: "Вы успешно разметили",
                 variant: "default",
             })
+        }
+    }
+
+    async function fetchTopAllCards(topN: number) {
+        try {
+            const response = await ApiImage.getTopCards(topN);
+            setTopAllCards(response);
+        } catch (error) {
+            console.log(error);
+
         }
     }
 
@@ -68,12 +82,12 @@ const ImageGenerateCard = ({ imgSrc, status, imgWidth, imgHeight, imgId }: Image
                                 changeType: "add"
                             })}
                         />
-                        <IconButton
+                        {/* <IconButton
                             iconSrc={repeat_path}
                             borderColor='white'
                             altText="Edit"
                         // onClick={() => alert('Edit button clicked')}
-                        />
+                        /> */}
                     </div>
                     <Button variant="default" className="shad-button_secondary px-5"
                         onClick={goToConstructor}>

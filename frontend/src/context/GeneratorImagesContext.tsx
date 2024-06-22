@@ -47,6 +47,7 @@ const GeneratorImagesProvider = ({ children }: { children: ReactNode }) => {
                 const allComplete = response.every(image => image.status === 'complete');
                 if (allComplete) {
                     clearInterval(intervalId as number);
+                    setIsStartGeneration(false);
                 }
             } catch (error) {
                 toast({

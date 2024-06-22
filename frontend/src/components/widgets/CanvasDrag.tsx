@@ -8,6 +8,8 @@ import CanvasSideBar from './CanvasSideBar';
 import { useImageConstructor } from '@/context/imageConstructorContext';
 import ApiImage from '@/services/apiImage';
 
+import { RotatingSquare } from 'react-loader-spinner'
+
 interface DraggableImageProps {
     x: number;
     y: number;
@@ -352,8 +354,8 @@ const CanvasDrag: React.FC = () => {
     return (
         <>
             <div className='flex justify-around px-10 items-center' style={{ height: `calc(100vh - ${topBarHeight}px)` }}>
-                {!isLoading &&
-                    <Stage
+                {!isLoading ?
+                    (<Stage
                         width={width * scale}
                         height={height * scale}
                         ref={stageRef}
@@ -367,13 +369,17 @@ const CanvasDrag: React.FC = () => {
                         }}
                     >
                         <Layer>
-                            <Rect
+                        <Rect
                                 x={0}
                                 y={0}
                                 width={width}
                                 height={height}
                                 fill={lion.color}
+                                onMouseDown={_ => {
+                                    setSelectedId(null);
+                                }}
                             />
+
                             <DraggableImage
                                 x={lion.x}
                                 y={lion.y}
@@ -400,7 +406,19 @@ const CanvasDrag: React.FC = () => {
                                 />
                             ))}
                         </Layer>
-                    </Stage>
+                    </Stage>):
+                                      (
+                                        <RotatingSquare
+                                            visible={true}
+                                            height={100}
+                                            width={100}
+                                            color="#476BF0"
+                                            ariaLabel="rotating-square-loading"
+                                            wrapperStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            wrapperClass=""
+                                        />
+                                    )
+                
                 }
                 <div className='text-black'>
                     <CanvasSideBar handleClick={handleExport} handleAddText={handleAddText}
