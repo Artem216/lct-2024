@@ -59,7 +59,7 @@ FROM python:3.11.4-bullseye
 WORKDIR /code
 
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install --proxy http://35.185.196.38:3128 -r requirements.txt
 
 COPY . /code
 
@@ -67,7 +67,7 @@ RUN mkdir -p /data/logs
 
 RUN mkdir -p /root/.u2net
 
-RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx -O /root/.u2net/u2net.onnxqq
+# RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx -O /root/.u2net/u2net.onnxqq
 
 
 
