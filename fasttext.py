@@ -64,7 +64,7 @@ def create_matrix_and_keys(path_json: str) -> tp.Tuple[np.ndarray, tp.List[str]]
   return matrix, keys
 
 
-def get_objects(requests: tp.List[str], num_tags: int = 3, top_k: int = 5) -> tp.Dict: # dict(str: List[str]) (request: tags)
+def get_objects(requests: tp.List[str], matrix: np.ndarray, keys: tp.List[str], num_tags: int = 3, top_k: int = 5) -> tp.Dict: # dict(str: List[str]) (request: tags)
   request_objects = {}
   for r in request:
     similarities = count_similiarities(encode_word(r), matrix)
