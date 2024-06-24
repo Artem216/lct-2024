@@ -17,6 +17,7 @@ CREATE TABLE features (
             goal VARCHAR(255) ,
             colour VARCHAR(255) NOT NULL,
             product VARCHAR(255),
+            holiday VARCHAR(255),
             image_type VARCHAR(255) NOT NULL,
             tags VARCHAR(255)
         )
@@ -64,7 +65,7 @@ steps = [
     step(f"INSERT INTO users (name, password, email, is_admin, is_delete) VALUES ('test', '{get_password_hash('test')}', 'test@test.com', false, false);"),
 
     
-    step("CREATE TABLE features ( id SERIAL PRIMARY KEY, prompt VARCHAR(255), height INT NOT NULL, width INT NOT NULL, goal VARCHAR(255), colour VARCHAR(255) NOT NULL, product VARCHAR(255), image_type VARCHAR(255) NOT NULL, tags VARCHAR(255))",
+    step("CREATE TABLE features ( id SERIAL PRIMARY KEY, prompt VARCHAR(255), height INT NOT NULL, width INT NOT NULL, goal VARCHAR(255), colour VARCHAR(255) NOT NULL, product VARCHAR(255),holiday VARCHAR(255), image_type VARCHAR(255) NOT NULL, tags VARCHAR(255))",
         "DROP TABLE features"),
     
     

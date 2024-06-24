@@ -2,7 +2,7 @@ from db.database import get_connection
 from pydantic import BaseModel
 from typing import Optional
 
-from schemas.predict_schemas import  PredictRequest, PredictData, PredictRequestFile
+from schemas.predict_schemas import  PredictRequest, PredictData, PredictRequestFile, Img2ImgRequest
 from schemas.find_schemas import AllCards, PromptTags
 from config import logger
 
@@ -23,7 +23,7 @@ class AddResponseData(BaseModel):
 from typing import Any
 
 
-async def add_request(user_id : int, predict_data : PredictRequest | PredictRequestFile) -> AddRequestData:
+async def add_request(user_id : int, predict_data : PredictRequest | PredictRequestFile | Img2ImgRequest) -> AddRequestData:
     """
     Добавление нового запроса в базу данных.
 
@@ -40,8 +40,8 @@ async def add_request(user_id : int, predict_data : PredictRequest | PredictRequ
     db = await get_connection()
 
     qwery_features = """
-    INSERT INTO features (prompt, height, width, goal , tags, product, image_type, colour)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    INSERT INTO features (prompt, height, width, goal , tags, product, image_type, colour, holiday)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING id;
     """
     if predict_data.product != "":
@@ -56,7 +56,8 @@ async def add_request(user_id : int, predict_data : PredictRequest | PredictRequ
                                         "",
                                         new_product,
                                         predict_data.image_type,
-                                        predict_data.colour )
+                                        predict_data.colour,
+                                        predict_data.holiday )
 
     qwery_req = """
     INSERT INTO requests (status, fk_features, fk_user) 

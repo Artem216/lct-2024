@@ -2,6 +2,8 @@ from minio import Minio
 from minio.error import S3Error
 import os
 
+from io import BytesIO
+
 import requests
 
 from datetime import timedelta
@@ -52,20 +54,32 @@ def upload_fileobj_to_s3(file_obj, bucket_name, object_name, client=None):
         print(f"Error uploading file object: {e}")
         raise
 
-def download_file(url, save_path):
-    # Получаем имя файла из URL
-    file_name = url.split("/")[-1]
-    # Полный путь для сохранения файла
-    file_path = os.path.join(save_path, file_name)
 
-    # Запрос на скачивание файла
-    response = requests.get(url)
-    if response.status_code == 200:
-        # Если запрос успешен, сохраняем файл
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
-        print(f"Файл успешно сохранен по пути: {file_path}")
-    else:
-        # Если произошла ошибка при загрузке
-        print(f"Ошибка загрузки файла. Код ошибки: {response.status_code}")
+def download_from_s3(bucket_name, object_name, client=None):
+    """
+    Загружает объект из S3 (MinIO) и возвращает его содержимое.
 
+    Args:
+        bucket_name: Имя бакета.
+        object_name: Имя объекта в бакете.
+        client: Клиент MinIO.
+
+    Returns:
+        content: Содержимое загруженного объекта.
+    """
+    if client is None:
+        raise ValueError("MinIO client is not provided")
+
+    try:
+        if not client.bucket_exists(bucket_name):
+            raise ValueError(f"Bucket {bucket_name} does not exist")
+
+        response = client.get_object(bucket_name, object_name)
+        content = BytesIO(response.read())
+        
+        logger.info(f"File object {object_name} downloaded from bucket {bucket_name}")
+
+        return content
+    except S3Error as e:
+        logger.error(f"Error downloading file object: {e}")
+        raise
