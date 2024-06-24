@@ -19,6 +19,7 @@ interface IGenerate {
     use_llm: boolean;
     is_abstract?: boolean;
     photo_id?: number;
+    holiday?: string;
 }
 
 interface IGenerate {

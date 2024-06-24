@@ -138,6 +138,7 @@ const SideBarGenerator = () => {
                     id_user_from_csv: Number(currentId),
                     cluster_name: currentClust,
                     is_abstract: !isToggled,
+                    holiday: data.holiday,
                 }, file)
                 form.reset();
                 setIsStartGeneration(true);
@@ -172,6 +173,7 @@ const SideBarGenerator = () => {
                     colour: data.color,
                     use_llm: Boolean(checkLLM),
                     is_abstract: !isToggled,
+                    holiday: data.holiday,
                 })
                 form.reset();
                 setIsStartGeneration(true);
