@@ -30,7 +30,7 @@ type CheckedState = boolean | 'indeterminate';
 
 const SideBarGenerator = () => {
     const topBarHeight = 60;
-    const maxLengthSymbols = 1000;
+    const maxLengthSymbols = 2000;
     const [lengthSymbols, setLengthSymbols] = useState(0);
     const [checkPrompt, setCheckPrompt] = useState<CheckedState>(false);
     const [checkColor, setCheckColor] = useState<CheckedState>(false);
