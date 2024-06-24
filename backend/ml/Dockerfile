@@ -67,7 +67,7 @@ RUN mkdir -p /data/logs
 
 RUN mkdir -p /root/.u2net
 
-# RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx -O /root/.u2net/u2net.onnxqq
+RUN wget https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx -O /root/.u2net/u2net.onnxqq
 
 
 

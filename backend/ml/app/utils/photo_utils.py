@@ -32,7 +32,10 @@ def add_image_on_background(foreground_bytes : io.BytesIO , background_color : s
         child_w = foreground.width
         child_h = foreground.height
     else:
-        raise ValueError("Invalid position_mode. Choose from 'center', 'right_full_height', 'right_half_height'.")
+        x = (width - foreground.width) // 2
+        y = (height - foreground.height) // 2
+        child_w = foreground.width
+        child_h = foreground.height
     
     background.paste(foreground, (x, y), foreground)
 

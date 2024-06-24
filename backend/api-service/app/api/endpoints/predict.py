@@ -5,12 +5,12 @@ from db.dependencies import get_current_user
 
 from schemas.user_schemas import UserDto
 from schemas.find_schemas import AllCards
-from schemas.predict_schemas import PredictResponse, PredictRequest, PredictData, PredictRequestFile
+from schemas.predict_schemas import PredictResponse, PredictRequest, PredictData, PredictRequestFile, Img2ImgRequest
 
 from services.predict_service import add_request, get_response
 # from services.find_service import get_card
 
-from utils.kafka_producer import send_task, send_file_task
+from utils.kafka_producer import send_task, send_file_task, send_img2img_task, send_img2img_file_task
 from utils.csv_utils import find_row_by_id, get_values_by_cluster
 
 from typing import List, Optional
@@ -49,6 +49,31 @@ def checker(data: str = Form(...)):
             detail=jsonable_encoder(e.errors()),
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
+
+def checker_img(data: str = Form(...)):
+    """
+    Проверить данные формы.
+
+    Этот метод проверяет входные данные формы, используя модель валидации PredictRequestFile.
+    Если данные не соответствуют ожиданиям модели, генерируется исключение HTTP 422.
+
+    Args:
+        data (str): Входные данные формы в виде строки.
+
+    Returns:
+        Объект, прошедший валидацию моделью PredictRequestFile.
+
+    Raises:
+        HTTPException: Если входные данные не проходят валидацию, генерируется исключение с кодом статуса 422 и подробностями ошибки.
+    """
+    try:
+        return PredictRequest.model_validate_json(data)
+    except ValidationError as e:
+        raise HTTPException(
+            detail=jsonable_encoder(e.errors()),
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
 
 
 @router.post("/predict", response_model=List[PredictResponse], status_code=status.HTTP_200_OK)
@@ -107,7 +132,7 @@ async def file_to_text(
     Входные данные проверяются с помощью функции checker.
 
     Args:
-        predict_data_file (PredictRequestFile): Данные для предсказания, полученные из формы и проверенные функцией checker.
+        predict_data_file (PredictRequest): Данные для предсказания, полученные из формы и проверенные функцией checker.
         file (UploadFile): Загруженный пользователем файл.
         current_user (UserDto): Текущий аутентифицированный пользователь. Получается с помощью зависимости.
 
@@ -118,13 +143,14 @@ async def file_to_text(
         HTTPException: Если произошла ошибка при обработке запроса, генерируется исключение с кодом статуса 400 и подробностями ошибки.
     """
     try:
-        logger.info(f"Received predict request for user: {current_user.name}")
+        logger.info(f"Received file predict request for user: {current_user.name}")
         contents = await file.read()
         csv_reader = csv.DictReader(io.StringIO(contents.decode('utf-8')))
         
         requests = []
 
         for _ in range(predict_data_file.n_variants):
+
             req = await add_request(user_id=current_user.id, predict_data=predict_data_file)
             requests.append(PredictResponse(id=req.id, status=req.status))
 
@@ -137,7 +163,6 @@ async def file_to_text(
                     await send_file_task(req.id, predict_data_file, current_user.id, new_file)
                 else:
                     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{new_file}")
-
             if predict_data_file.cluster_name:
                 new_file = []
                 for row in csv_reader:
@@ -155,6 +180,89 @@ async def file_to_text(
         logger.error(f"Error occurred during predict request: {str(e)}")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+@router.post("/predict_img2img", response_model=List[PredictResponse], status_code=status.HTTP_200_OK)
+async def img2img_prediction(
+    img2img_data: Img2ImgRequest,
+    current_user: UserDto = Depends(get_current_user),
+) -> List[PredictResponse]:
+    """
+    Генерация предиктов на основе изображения.
+
+    Данный эндпойнт позволяет пользователю запросить предикты на основе одного или нескольких изображений. Он принимает на вход
+    объект Img2ImgRequest, содержащий данные для предсказания, и возвращает список объектов PredictResponse, содержащих
+    информацию о созданных запросах.
+
+    Args:
+        img2img_data (Img2ImgRequest): Данные для предсказания на основе изображения.
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[PredictResponse]: Список объектов PredictResponse, содержащих id предикта.
+
+    Raises:
+        HTTPException: Если произошла ошибка при обработке запроса на предсказание.
+    """
+    try:
+        logger.info(f"Received img2img predict request for user: {current_user.name}")
+        
+        requests = []
+        for _ in range(img2img_data.n_variants):
+            # Cохранение в бд запроса
+            req = await add_request(user_id=current_user.id, predict_data=img2img_data)
+                        
+            requests.append(PredictResponse(id=req.id, status=req.status))
+            
+            await send_img2img_task(req.id, img2img_data, current_user.id)
+
+        return requests
+    
+    except Exception as e:
+        logger.error(f"Error occurred during img2img predict request: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post("/predict_img2img_file", response_model=List[PredictResponse], status_code=status.HTTP_200_OK)
+async def img2img_file_prediction(
+    img2img_data: PredictRequest = Depends(checker_img),
+    file: UploadFile = File(...),
+    current_user: UserDto = Depends(get_current_user),
+) -> List[PredictResponse]:
+    """
+    Генерация предиктов на основе стороннего изображения.
+
+    Данный эндпойнт позволяет пользователю запросить предикты на основе своего изображения. Он принимает на вход
+    File, данные для предсказания, и возвращает список объектов PredictResponse, содержащих
+    информацию о созданных запросах.
+
+    Args:
+        img2img_data (Img2ImgRequest): Данные для предсказания на основе изображения.
+        file (UploadFile): Загруженный пользователем файл.
+        current_user (UserDto): Объект, содержащий информацию об авторизованном пользователе.
+
+    Returns:
+        List[PredictResponse]: Список объектов PredictResponse, содержащих id предикта.
+
+    Raises:
+        HTTPException: Если произошла ошибка при обработке запроса на предсказание.
+    """
+    try:
+        logger.info(f"Received img2img predict request for user: {current_user.name}")
+
+        file_content = io.BytesIO(await file.read())
+        requests = []
+        for _ in range(img2img_data.n_variants):
+            # Cохранение в бд запроса
+            req = await add_request(user_id=current_user.id, predict_data=img2img_data)
+                        
+            requests.append(PredictResponse(id=req.id, status=req.status))
+            
+            await send_img2img_file_task(req.id, img2img_data, current_user.id, file_content)
+
+        return requests
+    
+    except Exception as e:
+        logger.error(f"Error occurred during img2img predict request: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 
