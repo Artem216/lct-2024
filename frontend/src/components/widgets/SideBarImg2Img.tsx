@@ -113,6 +113,7 @@ const SideBarImg2Img = () => {
                     colour: data.color,
                     use_llm: false,
                     is_abstract: false,
+                    holiday: "",
                 }, fileImg)
                 form.reset();
                 setIsStartGeneration(true);
@@ -146,7 +147,8 @@ const SideBarImg2Img = () => {
                     colour: data.color,
                     use_llm: false,
                     is_abstract: true,
-                    photo_id: Number(imageId)
+                    photo_id: Number(imageId),
+                    holiday: "",
                 })
                 form.reset();
                 setIsStartGeneration(true);
