@@ -9,6 +9,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "engines": {
+    "npm": ">=8.7.0"
+  },
+  "overrides": {
+    "react": "$react"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@nivo/bar": "^0.87.0",
@@ -45,6 +51,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.21.1",
     "react-spinners": "^0.13.8",
+    "react-tooltip": "^5.27.0",
     "tailwind-merge": "^2.2.0",
     "use-image": "^1.1.1",
     "zod": "^3.22.4"

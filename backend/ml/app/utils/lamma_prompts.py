@@ -33,11 +33,11 @@ some_objects = {
 }
 
 necessary_objects = {'currency exchange': ',coin',
-                    'car loan': ',car',
+                    'autocredit': ',car',
                     'mortgage': ',house',
-                    'bank card': ',card,gazprombank logo',
-                    'accounts, deposits': ',coin',
-                    'loan': ',coin',
+                    'card': ',card,gazprombank logo',
+                    'accounts deposits': ',coin',
+                    'credit': ',coin',
                     'insurance': ',shield'}
 
 other_tags = list(some_objects.keys())

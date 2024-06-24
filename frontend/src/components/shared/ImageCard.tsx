@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import IconButton from './IconButton';
 import ApiImage, { IRating } from '@/services/apiImage';
 import like_path from "../../assets/like.png"
+import { useImg2Img } from '@/context/Img2ImgContext';
 
 interface ImageCardProps {
   imgId: number;
@@ -25,6 +26,8 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: 
 
   const textRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const { setImgSrc } = useImg2Img();
 
   useEffect(() => {
     if (textRef.current) {
@@ -70,7 +73,9 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: 
   }
 
   function goToImg2Img() {
-
+    let imageType = "top";
+    setImgSrc(imgSrc);
+    navigate(`/image2image/${imageType}/${imgId}`);
   }
 
   return (

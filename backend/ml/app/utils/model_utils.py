@@ -14,13 +14,16 @@ from diffusers import DiffusionPipeline, StableDiffusionPipeline
 import torch
 import peft
 import transformers
-from translate import Translator
+# from translate import Translator
 from rembg import remove
 import numpy as np
 from tqdm.notebook import tqdm
 
 from .lama_dataset import prompt_dataset_pipeline
 
+from .translator import translate
+
+from transformers import pipeline
 
 
 class Model:
@@ -29,7 +32,8 @@ class Model:
         logger.info(self.device)
         self.name_model = name_model
         self.load_model(weights)
-    
+        self.trans_pipe = pipeline("translation", model="Helsinki-NLP/opus-mt-ru-en")
+
     def load_model(self, weights):
         self.pipe = StableDiffusionPipeline.from_pretrained(self.name_model, torch_dtype=torch.float16).to(self.device)
         self.pipe.safety_checker = None
@@ -48,11 +52,13 @@ class Model:
         if hasattr(self.pipe, 'adapter_manager'):
             self.pipe.adapter_manager.clear_adapters()
     
-    
-    def translator(self, prompt):
-        translator = Translator(from_lang="ru", to_lang="en")
-        result = translator.translate(prompt)
-        return result
+    def translator(self ,text: str) -> str:
+        return self.trans_pipe(text)[0]['translation_text']
+
+    # def translator(self, prompt):
+    #     translator = Translator(from_lang="ru", to_lang="en")
+    #     result = translator.translate(prompt)
+    #     return result
     
     def remove_bg(self, img):
         return remove(img)

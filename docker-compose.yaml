@@ -12,7 +12,7 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ZieZFt9kMWAW
       POSTGRES_DB: dev
     ports:
       - "5432:5432"
@@ -72,7 +72,7 @@ services:
       - s3_data:/data
     environment:
       - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ROOT_PASSWORD=ZieZFt9kMWAW
     command: server --console-address ":9001" /data
 
   api:
@@ -101,6 +101,13 @@ services:
       - zookeeper
     volumes:
       - ./hub:/app/hub
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     restart: always
 
   reactapp:

@@ -4,7 +4,7 @@ import re
 import random
 import numpy as np
 
-LLAMA_SERVER = 'http://localhost:11434/api/generate'
+LLAMA_SERVER = 'http://91.224.86.180:11434/api/generate'
 TEMPERATURE = 1.2    # отвечает за вариативность и длину генерации
 MODEL = 'llama3'
 

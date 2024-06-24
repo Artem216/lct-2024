@@ -1,5 +1,5 @@
 import { useAllImages } from "@/context/AllImagesContext"
-import ImageCard from "../shared/ImageCard"
+import MyImageCard from "../shared/MyImageCard"
 import ImageCarousel from "./ImageCarousel";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -38,7 +38,7 @@ const MyImagesWidget = () => {
           {myCards.map((card) => {
 
             return (
-              <ImageCard rating={card.rating}
+              <MyImageCard rating={card.rating}
                 imgPrompt={card.prompt}
                 imgSrc={card.child_s3_url}
                 imgId={card.req_id}
