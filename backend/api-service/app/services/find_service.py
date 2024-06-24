@@ -11,32 +11,32 @@ from config import logger
 
 
 
-# class Card(BaseModel):
-#     id: int
-#     s3_url: str
+class Card(BaseModel):
+    id: int
+    child_s3_url: str
 
-# async def get_card(req_id: int) -> Card:
-#     """
-#     Получение карточки фотографии по id
+async def get_card(req_id: int) -> Card:
+    """
+    Получение карточки фотографии по id
 
-#     Args:
-#         req_id (int): id карточки 
+    Args:
+        req_id (int): id карточки 
 
-#     Returns:
-#         Card: объект содержащий информацию о карточке.
+    Returns:
+        Card: объект содержащий информацию о карточке.
 
-#     """
-#     db = await get_connection()
+    """
+    db = await get_connection()
 
-#     qwery = """
-#     SELECT id, s3_url
-#     FROM response
-#     WHERE id = $1;
-#     """
+    qwery = """
+    SELECT id, child_s3_url
+    FROM response
+    WHERE id = $1;
+    """
 
-#     record = await db.fetchrow(qwery, req_id)
+    record = await db.fetchrow(qwery, req_id)
 
-#     return Card(**record)
+    return Card(**record)
 
 
 async def get_top_cards(n: int) -> List[TopCards]:
@@ -170,11 +170,26 @@ async def get_cards_by_theme(theme: str) -> List[TopCards]:
     JOIN users u ON r.fk_user = u.id
     WHERE f.product = $1
     """
-    # ORDER BY r.rating DESC
-    # LIMIT $1;
 
     records = await db.fetch(query, theme)
-    
+
+    if records is None:
+        query = """
+        SELECT r.id, 
+            r.child_s3_url, 
+            r.parent_s3_url, 
+            r.rating, 
+            u.name AS user_name, 
+            f.prompt,
+            f.product
+        FROM response r
+        JOIN requests req ON r.fk_request = req.id
+        JOIN features f ON req.fk_features = f.id
+        JOIN users u ON r.fk_user = u.id
+        WHERE f.holiday = $1
+        """
+        records = await db.fetch(query, theme)
+        
     ans = [
         TopCards(
             id=record['id'],

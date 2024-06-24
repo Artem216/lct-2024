@@ -3,15 +3,16 @@ import asyncio
 import json
 
 from .model_utils import Model, Request
-from .s3_utils import upload_fileobj_to_s3, get_minio_client, download_file
+from .s3_utils import upload_fileobj_to_s3, get_minio_client, download_from_s3
 from config import cfg, logger
 
 from .kafka_producer import send_predict
 
 from .photo_utils import add_image_on_background
 
-
-
+import requests
+import io
+import base64
 weights = {"/code/weights/GAZPROM_850_photo-000010.safetensors": 0.5,
            "/code/weights/GAZPROM_lora_blue_orange.safetensors": 0.5}
 
@@ -50,17 +51,25 @@ async def consume():
             image_type = task['image_type']
             width = task['width']
             height = task['height']
+            is_abstract = task['is_abstract']
             goal = task['goal']
+            holiday = task['holiday']
             # TODO: придумать что делать с тегами.
 
             use_llm = task['use_llm']
             logger.info(f"Received task status from Kafka: {task_id}")
 
             if 'file' in task.keys():
-                img, new_prompt= req.create_imgs(n=1 , dataset= task['file'], use_llm= use_llm)
+                img, new_prompt= req.create_imgs(n=1 , dataset= task['file'], use_llm= use_llm,is_abstract=is_abstract, holiday=holiday )
+            elif 'photo_s3_url' in task.keys():
+                response = requests.get(task['photo_s3_url'])
+                img, new_prompt= req.create_imgs(n=1 , use_llm= use_llm, image=io.BytesIO(response.content),is_abstract=is_abstract, holiday=holiday)
+            elif 'file_photo' in task.keys():
+                img, new_prompt= req.create_imgs(n=1 , use_llm= use_llm, image=io.BytesIO(base64.b64decode(task['file_photo'])) ,is_abstract=is_abstract, holiday=holiday)
             else:
-                img, new_prompt = req.create_imgs(n=1 ,prompt=prompt, product=product, use_llm= use_llm)
-            
+                img, new_prompt = req.create_imgs(n=1 ,prompt=prompt, product=product, use_llm= use_llm, is_abstract=is_abstract, holiday=holiday)
+
+
             bucket_name = cfg.bucket_name_1
             object_name = f"output_image{task_id}.png"
             child_url = upload_fileobj_to_s3(img, bucket_name, object_name, client=get_minio_client(cfg.S3_HOST, cfg.ACCESS_KEY, cfg.SECRET_KEY))

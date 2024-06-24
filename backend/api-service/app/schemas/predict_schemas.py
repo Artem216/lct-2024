@@ -52,8 +52,10 @@ class PredictRequest(BaseModel):
     height: int
     goal: str
     product: str
+    holiday : str
     image_type: str
     colour: str
+    is_abstract : bool
     use_llm : bool
 
 
@@ -82,8 +84,14 @@ class PredictRequestFile(BaseModel):
     height: int
     goal: str
     product: str
+    holiday : str
     image_type: str
     colour: str
     id_user_from_csv: int
     cluster_name : str
+    is_abstract: bool
     use_llm : bool
+
+class Img2ImgRequest(PredictRequest):
+    
+    photo_id : int
