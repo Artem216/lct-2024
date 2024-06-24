@@ -198,6 +198,20 @@ export const imageTypeValues: IConstant[] = [
     { 'nbo': 'NBO' },
 ]
 
+export const holidays: IConstant[] = [
+    { "Space Day": "День Космонавтики" },
+    { "Russian Day": "День России" },
+    { "Oil": "Масленица" },
+    { "New Year": "Новый Год" },
+    { "May 9, Victory Day": "День Победы" },
+    { "February 14, Valentine's Day": "День Святого Валентина" },
+    { "Easter": "Пасха" },
+    { "Birthday": "День Рождения" },
+    { "23 February, Fatherland's Day": "День Защитника Отечества" },
+    { "8 March, International Women Day": "Международный Женский День" },
+    { "1 September, Knowledge Day": "День Знаний" }
+]
+
 export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0", "#FD7E0B", "#85B6F6", "#D8DFFF", "#C4E7FF",
     "#9892F5", "#00AEE7"
 ]
