@@ -23,12 +23,15 @@ import ApiImage from "@/services/apiImage"
 import { useGeneratorImages } from "@/context/GeneratorImagesContext"
 import { getRandomString, validatePromptForTags } from "@/lib/utils"
 import ConfirmDialog from "../shared/ConfirmDialog"
-import { useFileUploader } from "@/context/FileUploaderContext"
+import { useImg2Img } from "@/context/Img2ImgContext"
+import { useParams } from "react-router-dom"
+import { Tooltip } from 'react-tooltip'
+import { TipImg2ImgText } from "@/constants"
 
 type CheckedState = boolean | 'indeterminate';
 
 
-const SideBarGenerator = () => {
+const SideBarImg2Img = () => {
     const topBarHeight = 60;
     const maxLengthSymbols = 100;
     const [lengthSymbols, setLengthSymbols] = useState(0);
@@ -37,22 +40,25 @@ const SideBarGenerator = () => {
     const [checkLLM, setCheckLLM] = useState<CheckedState>(false);
     const [openConfirmLLMDialog, setOpenConfirmDialog] = useState(false);
 
+    const { imageId, imageType } = useParams();
+
     const { setIsStartGeneration, setImgHeight, setImgWidth,
         setImgNumber, setGeneratedImages
     } = useGeneratorImages();
 
-    const { file, handleFileUpload, setFile, currentClust, currentId } = useFileUploader();
+    const { handleImgFileUpload, fileImg, setImgFile, imgSrc } = useImg2Img();
+
+    useEffect(() => {
+        if (imageType === "top") {
+            setCheckPrompt(true)
+        }
+        if (!imgSrc) {
+            setCheckPrompt(false)
+        }
+    }, [imgSrc, imageType])
 
 
     const FormSchema = z.object({
-        product: z
-            .string({
-                required_error: "Пожалуйста выберите продукт",
-            }),
-        channel: z
-            .string({
-                required_error: "Пожалуйста выберите канал",
-            }),
         prompt: z
             .string()
             .refine(validatePromptForTags, {
@@ -66,7 +72,7 @@ const SideBarGenerator = () => {
             .string({
                 required_error: "Пожалуйста задайте высоту",
             })
-            ,
+        ,
         width: z
             .string({
                 required_error: "Пожалуйста задайте ширину",
@@ -93,27 +99,21 @@ const SideBarGenerator = () => {
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        let useLLM = false;
-        if (checkLLM && !openConfirmLLMDialog) {
-            useLLM = true;
-            setOpenConfirmDialog(true);
-            return;
-        }
-        if (file) {
+        console.log('here')
+        if (fileImg) {
             try {
-                const response = await ApiImage.generateFromFile({
+                const response = await ApiImage.img2imgFromFile({
                     n_variants: Number(data.imageNumber),
-                    prompt: data.prompt,
+                    prompt: "",
                     width: Number(data.width),
                     height: Number(data.height),
-                    goal: data.channel,
-                    product: data.product,
+                    goal: "",
+                    product: "",
                     image_type: data.imageType,
                     colour: data.color,
-                    use_llm: Boolean(checkLLM),
-                    id_user_from_csv: Number(currentId),
-                    cluster_name: currentClust,
-                }, file)
+                    use_llm: false,
+                    is_abstract: false,
+                }, fileImg)
                 form.reset();
                 setIsStartGeneration(true);
                 setImgHeight(Number(data.height));
@@ -135,18 +135,18 @@ const SideBarGenerator = () => {
 
 
             try {
-                console.log(data.prompt, 'prompt')
-                const response = await ApiImage.generate({
+                const response = await ApiImage.img2imgPredictSrc({
                     n_variants: Number(data.imageNumber),
                     prompt: data.prompt,
                     width: Number(data.width),
                     height: Number(data.height),
-                    goal: data.channel,
-                    product: data.product,
+                    goal: "",
+                    product: "",
                     image_type: data.imageType,
                     colour: data.color,
-                    use_llm: Boolean(checkLLM),
-
+                    use_llm: false,
+                    is_abstract: true,
+                    photo_id: Number(imageId)
                 })
                 form.reset();
                 setIsStartGeneration(true);
@@ -197,41 +197,6 @@ const SideBarGenerator = () => {
                 </p>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="m-5">
-                        <FormField
-                            control={form.control}
-                            name="product"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <GeneratorSelect onSelectChange={field.onChange}
-                                        selectTitle="Продукт" selectValues={ProductSelectValues} />
-                                    <FormMessage className="shad-form_message" />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="channel"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <GeneratorSelect onSelectChange={field.onChange}
-                                        selectTitle="Канал" selectValues={ChannelSelectValues} />
-                                    <FormMessage className="shad-form_message" />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="flex items-center space-x-2 ml-5 my-5">
-                            <Checkbox
-                                checked={checkPrompt}
-                                onCheckedChange={(value) => { setCheckPrompt(value) }}
-                            />
-                            <label
-                                htmlFor="terms"
-                                className="text-sm text-black
-                            font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Задать промпт
-                            </label>
-                        </div>
                         {checkPrompt &&
                             <div>
                                 <FormField
@@ -247,9 +212,19 @@ const SideBarGenerator = () => {
                                                 onChange={field.onChange}
                                             />
                                             <div className="flex items-center text-black justify-between">
-                                                <p className="text-[10px] text-left text-black">
-                                                    Пример: монеты, большой дом, автомобиль
+                                                <p
+                                                    className="text-[15px] text-left text-black border p-2 border-primary-500 
+                                                    border-5 cursor-pointer rounded-lg"
+                                                    data-tooltip-id="my-tooltip"
+                                                    data-tooltip-html={TipImg2ImgText}
+                                                >
+                                                    Как задать промпт ?
                                                 </p>
+                                                <Tooltip
+                                                    id="my-tooltip"
+                                                    opacity={1}
+                                                    style={{ backgroundColor: "#D4B9D5", color: 'black', zIndex: 1000 }}
+                                                />
                                                 <p>
                                                     {lengthSymbols}/{maxLengthSymbols}
                                                 </p>
@@ -259,19 +234,6 @@ const SideBarGenerator = () => {
                                     )}
                                 />
                             </div>}
-                        <div className="flex items-center space-x-2 ml-5 my-5">
-                            <Checkbox
-                                checked={checkLLM}
-                                onCheckedChange={(value) => { setCheckLLM(value) }}
-                            />
-                            <label
-                                htmlFor="terms"
-                                className="text-sm text-black
-                            font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Сгенерировать промпт с помощью LLM
-                            </label>
-                        </div>
                         <div className="flex justify-between items-center">
                             <FormField
                                 control={form.control}
@@ -426,7 +388,7 @@ const SideBarGenerator = () => {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 justify-between my-5">
+                        {/* <div className="flex gap-2 justify-between my-5">
                             <div>
                                 <Button type="button" className="text-black border border-gray-800 px-5 w-[150px]"
                                     onClick={() => { setFile(null) }}>
@@ -446,15 +408,15 @@ const SideBarGenerator = () => {
                                     onChange={handleFileUpload}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         <div className="flex mt-5 flex-col justify-end items-end gap-4">
                             <div>
-                                <Button type="submit" className="shad-button_primary px-5 w-[200px]">
-                                    Сгенерировать
+                                <Button type="submit" className="shad-button_primary px-5 minw-[200px]">
+                                    {imageType === "top" ? 'Сгенерировать' : 'Применить корпоративный стиль'}
                                 </Button>
                             </div>
                             <p className="base-regular md:base-regular text-center text-black m-2 mt-5">
-                            Перед новой генерацией, пожалуйста, перезагрузите страничку
+                                Перед новой генерацией, пожалуйста, перезагрузите страничку
                             </p>
                         </div>
                     </form>
@@ -472,4 +434,4 @@ const SideBarGenerator = () => {
     )
 }
 
-export default SideBarGenerator
+export default SideBarImg2Img

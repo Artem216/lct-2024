@@ -7,6 +7,7 @@ import IconButton from './IconButton';
 import ApiImage, { IRating } from '@/services/apiImage';
 import cross_path from '../../assets/cross.png';
 import tick_path from '../../assets/tick.png';
+import { useImg2Img } from '@/context/Img2ImgContext';
 
 interface ImageCardProps {
     imgId: number;
@@ -20,6 +21,8 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: 
     const [isExpanded, setIsExpanded] = useState(false);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const { setImgSrc } = useImg2Img();
+
 
     const { pathname } = useLocation();
     const navigate = useNavigate();
@@ -71,7 +74,9 @@ const ImageCard = ({ imgSrc, imgPrompt, rating, imgId, setOpenCarouselDialog }: 
     }
 
     function goToImg2Img() {
-
+        let imageType = "top";
+        setImgSrc(imgSrc);
+        navigate(`/image2image/${imageType}/${imgId}`);
     }
 
     return (

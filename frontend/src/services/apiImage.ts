@@ -17,6 +17,25 @@ interface IGenerate {
     image_type: string;
     colour: string;
     use_llm: boolean;
+    is_abstract?: boolean;
+    photo_id?: number;
+}
+
+interface IGenerate {
+    n_variants: number;
+    prompt: string;
+    width: number;
+    height: number;
+    goal: string;
+    tags?: [
+        {
+            "tag": string;
+        }
+    ];
+    product: string;
+    image_type: string;
+    colour: string;
+    use_llm: boolean;
 }
 
 // // userImage
@@ -135,6 +154,72 @@ const ApiImage = {
         formData.append('data', JSON.stringify(generateDataFile)); 
 
         const response = await axios.post<IResponseGenerate[]>(`${BASE_URL}/api/v1/predict_file`, formData, config);
+        const responseImgs: IResponseImage[] = response.data.map((data) => {
+            const imageObg: IResponseImage = {
+                user_id: 0,
+                req_id: data.id,
+                child_s3_url: "",
+                parent_s3_url: "",
+                x: 0,
+                y: 0,
+                colour: "",
+                child_w: 0,
+                child_h: 0,
+                rating: 0,
+                prompt: "",
+                width: 0,
+                height: 0,
+                goal: "",
+                status: data.status
+            }
+            return imageObg
+        })
+        
+        return responseImgs;
+    },
+    async img2imgPredictSrc(data: IGenerate) {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${storage.getToken()}`
+            }
+        }
+
+        const response = await axios.post<IResponseGenerate[]>(`${BASE_URL}/api/v1/predict_img2img`, data, config);
+        const responseImgs: IResponseImage[] = response.data.map((data) => {
+            const imageObg: IResponseImage = {
+                user_id: 0,
+                req_id: data.id,
+                child_s3_url: "",
+                parent_s3_url: "",
+                x: 0,
+                y: 0,
+                colour: "",
+                child_w: 0,
+                child_h: 0,
+                rating: 0,
+                prompt: "",
+                width: 0,
+                height: 0,
+                goal: "",
+                status: data.status
+            }
+            return imageObg
+        })
+        
+        return responseImgs;
+    },
+    async img2imgFromFile(generateDataFile: IGenerate, dataFile: File) {
+        let config = {
+            headers: {
+                Authorization: `Bearer ${storage.getToken()}`
+            }
+        }
+    
+        const formData = new FormData();
+        formData.append('file', dataFile);
+        formData.append('data', JSON.stringify(generateDataFile)); 
+
+        const response = await axios.post<IResponseGenerate[]>(`${BASE_URL}/api/v1/predict_img2img_file`, formData, config);
         const responseImgs: IResponseImage[] = response.data.map((data) => {
             const imageObg: IResponseImage = {
                 user_id: 0,
