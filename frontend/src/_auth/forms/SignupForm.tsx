@@ -17,6 +17,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { useUserContext } from "@/context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import ApiAuth from "@/services/apiAuth"
+import { useAllImages } from "@/context/AllImagesContext"
+import ApiImage from "@/services/apiImage"
 
 
 const SignupForm = () => {
@@ -24,6 +26,16 @@ const SignupForm = () => {
   const { setIsAuth } = useUserContext();
   const navigate = useNavigate();
 
+  const {setTopNCards} = useAllImages();
+
+  async function fetchTopNCards(topN: number) {
+    try {
+        const response = await ApiImage.getTopCards(topN)
+        setTopNCards(response);
+    } catch (error) {
+        console.log(error);
+    }
+  }
 
 
   // 1. Define your form.
@@ -46,6 +58,7 @@ const SignupForm = () => {
       })
       setIsAuth(true);
       form.reset();
+      fetchTopNCards(3);
       navigate('/');
     }
     catch (error) {

@@ -51,6 +51,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.21.1",
     "react-spinners": "^0.13.8",
+    "react-tooltip": "^5.27.0",
     "tailwind-merge": "^2.2.0",
     "use-image": "^1.1.1",
     "zod": "^3.22.4"

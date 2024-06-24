@@ -62,6 +62,11 @@ export const topbarLinks = [
     },
     {
         imgURL: "/assets/icons/wallpaper.svg",
+        route: "/image2image/new/0",
+        label: "Генератор по картинке",
+    },
+    {
+        imgURL: "/assets/icons/wallpaper.svg",
         route: "/editor",
         label: "Конструктор",
     },
@@ -193,7 +198,21 @@ export const imageTypeValues: IConstant[] = [
     { 'nbo': 'NBO' },
 ]
 
-export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0", "#FD7E0B", "#85B6F6", "#D8DFFF", "#C4E7FF", 
+export const holidays: IConstant[] = [
+    { "Space Day": "День Космонавтики" },
+    { "Russian Day": "День России" },
+    { "Oil": "Масленица" },
+    { "New Year": "Новый Год" },
+    { "May 9, Victory Day": "День Победы" },
+    { "February 14, Valentine's Day": "День Святого Валентина" },
+    { "Easter": "Пасха" },
+    { "Birthday": "День Рождения" },
+    { "23 February, Fatherland's Day": "День Защитника Отечества" },
+    { "8 March, International Women Day": "Международный Женский День" },
+    { "1 September, Knowledge Day": "День Знаний" }
+]
+
+export const bgGenerationColors: string[] = ["#FFC1A4", "#476BF0", "#FD7E0B", "#85B6F6", "#D8DFFF", "#C4E7FF",
     "#9892F5", "#00AEE7"
 ]
 
@@ -222,3 +241,21 @@ export const productCategoryMap = {
     "INS_PROPERTY": "insurance",
     "CURR_EXC": "currency_exchange"
 }
+
+export const TipImg2ImgText = `1) Поменять цвет объекта. <br />Опишите объекты, которые находятся на картинке и измените цвет объекта, <br />
+цвет которого нужно поменять. (Например, золотые монеты и оранжевый флаг -> золотые монеты и синий флаг) <br />
+<br />
+2) Смена главного объекта. <br />
+Напишите лишь название объекта, на который необходимо сменить. <br />
+(Например, кошка и монеты -> собака (будет собака с монетами), <br />
+монеты и флаг -> бантик (будут монеты с бантиком))<br />
+<br />
+
+3) Удаление объекта. <br />
+Опишите все объекты на изображении, кроме того, который хотите удалить. <br />
+(Например, синий щит и две золотые монеты -> синий щит)<br />
+<br />
+4) Смена второстепенного объекта. <br />
+Опишите все объекты, которые вы хотите видеть <br />
+и поменяйте объект, который нужно заменить, на желаемый. <br />
+(Например, синяя ваза с розовыми цветами и золотые монеты -> синяя ваза с розовыми цветами и ключи от машины)`
