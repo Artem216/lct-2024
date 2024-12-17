@@ -25,29 +25,30 @@
  * [Заполнение цветом](./notebooks/color-fill.ipynb)
  * [Форматы фотографий](./notebooks/Форматы_фотографий.ipynb)
  * [Сравнение моделей](./notebooks/model-comparison.ipynb)
-
 # Запуск 
 
-Администратор:  
-Логин: admin@admin.com  
-Пароль: admin  
-Тестовый пользователь:  
-Логин: test@test.com  
-Пароль: test  
+**Администратор:**  
+Логин: `admin@admin.com`  
+Пароль: `admin`  
+
+**Тестовый пользователь:**  
+Логин: `test@test.com`  
+Пароль: `test`  
 
 ## Локальный запуск
 
-1.'''git clone https://github.com/Artem216/lct-2024'''  
-2. '''cd lct-2024'''  
-3. '''cd /backend/api-service/app'''
-4. '''sudo vim .env''' (есть пример в .env.example)  
-5. '''cd ../../ml/app  
-6. '''sudo vim .env''' (есть пример в .env.example)  
-7. '''cd ../../../'''  
-8.Скачать веса моделей и поместить их в папку lct-2024/backend/ml/weights
-9.'''sudo docker compose up –build -d'''
+1. `git clone https://github.com/Artem216/lct-2024`  
+2. `cd lct-2024`  
+3. `cd /backend/api-service/app`  
+4. `sudo vim .env` (есть пример в `.env.example`)  
+5. `cd ../../ml/app`  
+6. `sudo vim .env` (есть пример в `.env.example`)  
+7. `cd ../../../`  
+8. Скачать веса моделей и поместить их в папку `lct-2024/backend/ml/weights`  
+9. `sudo docker compose up --build -d`  
 
-Интерфейс будет доступен по адресу: '''http://localhost:5173'''
+Интерфейс будет доступен по адресу: `http://localhost:5173`
+
 
 <img src="./images/front_1.png" alt="Сервис" width="800">
 <img src="./images/front_2.png" alt="Сервис" width="800">
